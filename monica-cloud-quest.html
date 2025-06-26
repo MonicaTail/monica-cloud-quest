@@ -1,0 +1,281 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>☁️ Monica's Cloud Quest ☁️</title>
+  <style>
+    body {
+      background: linear-gradient(to bottom, #b3e5fc, #e0f7fa);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      text-align: center;
+      padding: 50px;
+      overflow-x: hidden;
+      color: #003366;
+    }
+    h1 {
+      font-size: 3em;
+      margin-bottom: 20px;
+      animation: popIn 2s ease;
+      text-shadow: 0 0 15px #4fa1d8;
+    }
+    @keyframes popIn {
+      0% { transform: scale(0.5); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    button {
+      padding: 14px 28px;
+      margin: 12px;
+      font-size: 16px;
+      background: linear-gradient(145deg, #a7d7f9, #89c2f7);
+      color: #003366;
+      border: 2px solid #4fa1d8;
+      border-radius: 18px;
+      cursor: pointer;
+      transition: all 0.3s ease-in-out;
+      box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
+      user-select: none;
+      font-weight: 600;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+    }
+    button:hover:not(:disabled) {
+      background: linear-gradient(145deg, #89c2f7, #a7d7f9);
+      transform: scale(1.1) rotate(-1deg);
+      box-shadow: 0 10px 25px rgba(0, 119, 204, 0.6);
+    }
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+      box-shadow: none;
+      color: #666;
+    }
+    .hidden {
+      display: none;
+    }
+    #log {
+      text-align: left;
+      margin-top: 30px;
+      background: #ffffffcc;
+      padding: 25px 30px;
+      border-radius: 15px;
+      max-width: 840px;
+      margin-left: auto;
+      margin-right: auto;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      min-height: 220px;
+      font-size: 1.1em;
+      color: #003366;
+      user-select: text;
+    }
+    .victory {
+      color: #1b5e20;
+      font-weight: bold;
+      margin-top: 50px;
+      font-size: 1.8em;
+      text-shadow: 0 0 15px #00cc00;
+      animation: glow 1.5s ease-in-out infinite alternate;
+      max-width: 840px;
+      margin-left: auto;
+      margin-right: auto;
+      background: #e6ffe6cc;
+      padding: 30px;
+      border-radius: 18px;
+      box-shadow: 0 0 30px #00cc00aa;
+    }
+    @keyframes glow {
+      from {
+        text-shadow: 0 0 15px #00cc00, 0 0 25px #00cc00;
+      }
+      to {
+        text-shadow: 0 0 25px #00ff00, 0 0 35px #00ff00;
+      }
+    }
+    .avatar-selection {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      flex-wrap: wrap;
+      margin: 35px auto 15px auto;
+    }
+    .avatar {
+      cursor: pointer;
+      border: 5px solid transparent;
+      border-radius: 50%;
+      width: 140px;
+      height: 140px;
+      transition: all 0.35s ease-in-out;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+      user-select: none;
+      filter: drop-shadow(0 0 3px #77bfff);
+    }
+    .avatar:hover, .avatar.selected {
+      transform: scale(1.15) rotate(-5deg);
+      border-color: #0077cc;
+      box-shadow: 0 0 28px rgba(0, 119, 204, 0.85);
+      filter: drop-shadow(0 0 12px #3399ff);
+    }
+    #character-message {
+      font-style: italic;
+      color: #004d80;
+      margin-top: 15px;
+      font-size: 1.15em;
+      min-height: 40px;
+      max-width: 720px;
+      margin-left: auto;
+      margin-right: auto;
+      user-select: none;
+    }
+    #options button {
+      display: block;
+      width: 100%;
+      max-width: 400px;
+      margin: 12px auto;
+      font-size: 1.1em;
+      border-radius: 22px;
+      background: linear-gradient(135deg, #9cd3f5, #5fa9f5);
+      color: #002244;
+      font-weight: 700;
+      letter-spacing: 0.9px;
+      box-shadow: 0 6px 18px rgba(45, 118, 205, 0.7);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    #options button:hover:not(:disabled) {
+      transform: scale(1.15) rotate(1deg);
+      box-shadow: 0 10px 28px rgba(0, 120, 255, 0.9);
+      background: linear-gradient(135deg, #5fa9f5, #9cd3f5);
+      color: #001a3c;
+    }
+  </style>
+</head>
+<body>
+  <h1>☁️ Monica's Cloud Quest ☁️</h1>
+
+  <!-- Background Ambient Music -->
+  <audio id="bg-music" autoplay loop volume="0.4" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_49cfc53840.mp3?filename=soft-ambient-110054.mp3"></audio>
+
+  <div id="intro">
+    <p><strong>Select your character to begin your quest:</strong></p>
+    <div class="avatar-selection">
+      <img src="https://cdn-icons-png.flaticon.com/512/4140/4140048.png" class="avatar" alt="Developer Diva" data-player="diva" title="Developer Diva" />
+      <img src="https://cdn-icons-png.flaticon.com/512/4140/4140051.png" class="avatar" alt="Captain Cloud" data-player="captain" title="Captain Cloud" />
+      <img src="https://cdn-icons-png.flaticon.com/512/4140/4140037.png" class="avatar" alt="Tech Star" data-player="techstar" title="Tech Star" />
+    </div>
+    <div id="character-message"></div>
+    <button id="startBtn" disabled>Start Quest</button>
+  </div>
+
+  <div id="log" class="hidden"></div>
+  <div id="victory" class="victory hidden"></div>
+
+  <!-- Sounds -->
+  <audio id="correct-sound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_8ef019cf2e.mp3?filename=success-1-6297.mp3"></audio>
+  <audio id="wrong-sound" src="https://cdn.pixabay.com/download/audio/2022/10/27/audio_98dc22a702.mp3?filename=uh-oh-102024.mp3"></audio>
+  <audio id="awesome-choice" src="https://cdn.pixabay.com/download/audio/2023/05/23/audio_a1a59d13d4.mp3?filename=awesome-idea-147624.mp3"></audio>
+
+  <script>
+    let selectedAvatar = null;
+    const charMessage = document.getElementById('character-message');
+    const correctSound = document.getElementById('correct-sound');
+    const wrongSound = document.getElementById('wrong-sound');
+    const awesomeChoice = document.getElementById('awesome-choice');
+    const startBtn = document.getElementById('startBtn');
+    const bgMusic = document.getElementById('bg-music');
+
+    const avatarMessages = {
+      diva: "Developer Diva writes code in style, debugging bugs with sparkle!",
+      captain: "Captain Cloud commands the skies, always scaling solutions to perfection.",
+      techstar: "Tech Star shines bright in the terminal galaxy, mastering every CLI command."
+    };
+
+    // Select character & show message + play sound
+    document.querySelectorAll('.avatar').forEach(avatar => {
+      avatar.addEventListener('click', () => {
+        document.querySelectorAll('.avatar').forEach(a => a.classList.remove('selected'));
+        avatar.classList.add('selected');
+        selectedAvatar = avatar.dataset.player;
+        charMessage.textContent = avatarMessages[selectedAvatar];
+        awesomeChoice.play();
+        startBtn.disabled = false;
+      });
+    });
+
+    startBtn.addEventListener('click', () => {
+      if (!selectedAvatar) return;
+      document.getElementById('intro').classList.add('hidden');
+      startGame();
+    });
+
+    function startGame() {
+      const log = document.getElementById('log');
+      const victory = document.getElementById('victory');
+      log.classList.remove('hidden');
+      log.innerHTML = '';
+      victory.classList.add('hidden');
+
+      const levels = [
+        { title: 'Level 1: Oracle Account Setup', challenge: 'Which is the best way to start with Oracle Cloud?', options: [ { text: 'Use Facebook Login', fail: true }, { text: 'Sign up directly through Oracle Free Tier', fail: false }, { text: 'Ask Ben to make one for you', fail: true } ] },
+        { title: 'Level 2: Choose Your VM', challenge: 'Which VM should you choose?', options: [ { text: 'Tiny 1GB VM', fail: true }, { text: 'Standard E2.2 (16GB RAM)', fail: false }, { text: 'Free Trial Without Shape', fail: true } ] },
+        { title: 'Level 3: Open the Right Ports', challenge: 'Which ports do you need to open?', options: [ { text: 'Only 22 (SSH)', fail: true }, { text: '22 (SSH), 5901 (VNC), 8080 (Web)', fail: false }, { text: '8080 only', fail: true } ] },
+        { title: 'Level 4: Editing HTML Safely', challenge: 'Which editor avoids character encoding problems?', options: [ { text: 'Windows Notepad', fail: true }, { text: 'Notepad++ with UTF-8', fail: false }, { text: 'MS Word', fail: true } ] },
+        { title: 'Level 5: Share It With the World!', challenge: 'What should you do to publish on GitHub Pages?', options: [ { text: 'Push index.html to GitHub repo and enable Pages', fail: false }, { text: 'Just upload the file to your desktop', fail: true }, { text: 'Email the file to Ben', fail: true } ] },
+        { title: 'Level 6: Installing NetBeans', challenge: 'What is NetBeans used for?', options: [ { text: 'A snack brand', fail: true }, { text: 'An IDE to build Java applications', fail: false }, { text: 'A tool for cleaning your keyboard', fail: true } ] },
+        { title: 'Level 7: Installing TigerVNC', challenge: 'Why did you install TigerVNC on the VM?', options: [ { text: 'To access a graphical desktop remotely', fail: false }, { text: 'To connect a printer', fail: true }, { text: 'To speed up the CPU', fail: true } ] },
+        { title: 'Level 8: Using GitHub Commands', challenge: 'What command initializes a new git repository?', options: [ { text: 'git start', fail: true }, { text: 'git init', fail: false }, { text: 'git begin', fail: true } ] },
+        { title: 'Level 9: Publishing on GitHub Pages', challenge: 'How do you publish your game on GitHub Pages?', options: [ { text: 'Push your code to GitHub and enable GitHub Pages', fail: false }, { text: 'Email your files to friends', fail: true }, { text: 'Upload files only on your desktop', fail: true } ] },
+        { title: 'Bonus Challenge: Git Commands', challenge: 'Which git command commits your changes?', options: [ { text: 'git commit -m "message"', fail: false }, { text: 'git push', fail: true }, { text: 'git save', fail: true } ] }
+      ];
+
+      let levelIndex = 0;
+
+      function showLevel() {
+        if (levelIndex >= levels.length) {
+          victory.classList.remove('hidden');
+          victory.innerHTML = `
+            🎉 Hi Ben,<br><br>
+            Monica has just completed the ultimate cloud adventure! Along the way, she overcame provisioning errors, port issues, encoding nightmares, and more.<br><br>
+            From setting up VMs and configuring firewalls, to building interactive HTML games and pushing to GitHub — she’s demonstrated not only technical skills, but creativity, persistence, and heart.<br><br>
+            Thank you for inspiring her journey! 🚀☁️🎮
+          `;
+          return;
+        }
+
+        const level = levels[levelIndex];
+        log.innerHTML = `<h3>${level.title}</h3><p>${level.challenge}</p><div id="options"></div>`;
+
+        const optionsDiv = log.querySelector('#options');
+        optionsDiv.innerHTML = '';
+
+        level.options.forEach(option => {
+          const btn = document.createElement('button');
+          btn.textContent = option.text;
+          btn.disabled = false;
+
+          btn.onclick = () => {
+            if (option.fail) {
+              wrongSound.play();
+              // Show a funny, encouraging message below options but keep buttons enabled for retry
+              if (!optionsDiv.querySelector('.fail-msg')) {
+                const msg = document.createElement('p');
+                msg.className = 'fail-msg';
+                msg.style.color = '#cc3300';
+                msg.style.fontWeight = '700';
+                msg.style.marginTop = '10px';
+                msg.textContent = '❌ Nope! Try again, mate! 🎵';
+                optionsDiv.appendChild(msg);
+              }
+            } else {
+              correctSound.play();
+              optionsDiv.innerHTML = `<p style="color:#1b5e20; font-weight: 700;">✅ Awesome! Moving to next level...</p>`;
+              levelIndex++;
+              setTimeout(showLevel, 1500);
+            }
+          };
+          optionsDiv.appendChild(btn);
+        });
+      }
+
+      showLevel();
+    }
+  </script>
+</body>
+</html>
