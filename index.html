@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -76,6 +75,24 @@
       color: #666;
     }
 
+    /* Back button styling (different color) */
+    .back-btn {
+      background: #bbb !important;
+      color: #222 !important;
+    }
+
+    /* Refresh button styling */
+    .refresh-btn {
+      background: #ffd54f !important;
+      color: #333 !important;
+      border-color: #ffca28 !important;
+    }
+
+    /* === Hidden === */
+    .hidden {
+      display: none;
+    }
+
     /* === Log Area === */
     #log {
       text-align: left;
@@ -124,7 +141,211 @@
       }
     }
 
-    /* === Floating Butterflies === */
+    /* === Avatar Selection === */
+    .avatar-selection {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      flex-wrap: wrap;
+      margin: 35px auto 15px auto;
+      position: relative;
+      z-index: 10;
+    }
+
+    .avatar {
+      cursor: pointer;
+      border: 5px solid transparent;
+      border-radius: 50%;
+      width: 140px;
+      height: 140px;
+      transition: all 0.35s ease-in-out;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+      filter: drop-shadow(0 0 3px #77bfff);
+      user-select: none;
+      position: relative;
+      background: #d0e8ff;
+    }
+
+    .avatar:hover, .avatar.selected {
+      transform: scale(1.15) rotate(-5deg);
+      border-color: #0077cc;
+      box-shadow: 0 0 28px rgba(0, 119, 204, 0.85);
+      filter: drop-shadow(0 0 12px #3399ff);
+      background: linear-gradient(145deg, #89c2f7, #a7d7f9);
+    }
+
+    /* === Character Message === */
+    #character-message {
+      font-style: italic;
+      color: #004d80;
+      margin-top: 15px;
+      font-size: 1.15em;
+      min-height: 40px;
+      max-width: 720px;
+      margin-left: auto;
+      margin-right: auto;
+      user-select: none;
+      transition: all 0.3s ease-in-out;
+      position: relative;
+      z-index: 10;
+    }
+
+    /* === Option Buttons === */
+    #options button {
+      display: block;
+      width: 100%;
+      max-width: 400px;
+      margin: 12px auto;
+      font-size: 1.1em;
+      border-radius: 22px;
+      background: linear-gradient(135deg, #9cd3f5, #5fa9f5);
+      color: #002244;
+      font-weight: 700;
+      letter-spacing: 0.9px;
+      box-shadow: 0 6px 18px rgba(45, 118, 205, 0.7);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      user-select: none;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #options button:hover:not(:disabled) {
+      transform: scale(1.15) rotate(1deg);
+      box-shadow: 0 10px 28px rgba(0, 120, 255, 0.9);
+      background: linear-gradient(135deg, #5fa9f5, #9cd3f5);
+      color: #001a3c;
+    }
+
+    /* === Interactive Cloud Button (replaces blue dot) === */
+    .cloud-button {
+      font-size: 4rem;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      transition: transform 0.3s ease, filter 0.3s ease;
+      user-select: none;
+      color: #3399ff;
+      filter: drop-shadow(0 0 8px #66b3ff);
+      margin: 10px auto 30px auto;
+      display: inline-block;
+      position: relative;
+      z-index: 10;
+    }
+
+    .cloud-button:hover {
+      transform: scale(1.3) rotate(-10deg);
+      color: #66ccff;
+      filter: drop-shadow(0 0 20px #99ddff);
+    }
+
+    /* === Floating Clouds with words at top === */
+    .floating-clouds {
+      position: fixed;
+      top: 10px;
+      left: 0;
+      width: 100%;
+      height: 50px;
+      pointer-events: none;
+      overflow: visible;
+      z-index: 5;
+    }
+
+    .floating-clouds .cloud {
+      position: absolute;
+      background: #ffffffcc;
+      border-radius: 50% / 60%;
+      padding: 10px 25px;
+      font-weight: bold;
+      color: #336699;
+      box-shadow: 0 0 15px #ccc;
+      animation: floatClouds 6s ease-in-out infinite alternate;
+      font-size: 1.2rem;
+      user-select: none;
+      filter: drop-shadow(0 0 6px #a0c8ff);
+      cursor: default;
+      white-space: nowrap;
+    }
+
+    .floating-clouds .cloud:nth-child(odd) {
+      animation-duration: 8s;
+    }
+
+    .floating-clouds .cloud:nth-child(1) { top: 5px; left: 6%; }
+    .floating-clouds .cloud:nth-child(2) { top: 12px; left: 23%; }
+    .floating-clouds .cloud:nth-child(3) { top: 8px; left: 38%; }
+    .floating-clouds .cloud:nth-child(4) { top: 5px; left: 52%; }
+    .floating-clouds .cloud:nth-child(5) { top: 12px; left: 68%; }
+    .floating-clouds .cloud:nth-child(6) { top: 8px; left: 83%; }
+
+    @keyframes floatClouds {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(50px); }
+    }
+
+    /* === Raindrops container */
+    #rain {
+      pointer-events: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      overflow: hidden;
+      z-index: 9999;
+      mix-blend-mode: screen;
+    }
+
+    .raindrop {
+      position: absolute;
+      bottom: 100%;
+      width: 2px;
+      height: 15px;
+      background: #a3c1e0cc;
+      animation: fall linear infinite;
+      opacity: 0.6;
+      border-radius: 50%;
+      filter: drop-shadow(0 0 3px #a0b8ca);
+    }
+
+    @keyframes fall {
+      to {
+        transform: translateY(100vh);
+        opacity: 0;
+      }
+    }
+
+    /* === Sun rays container */
+    #sunrays {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      width: 200px;
+      height: 200px;
+      margin-left: -100px;
+      pointer-events: none;
+      z-index: 9999;
+      user-select: none;
+      filter: drop-shadow(0 0 12px #ffd54f);
+      animation: sunRotate 20s linear infinite;
+    }
+
+    #sunrays .ray {
+      position: absolute;
+      width: 8px;
+      height: 40px;
+      background: #ffd54f;
+      border-radius: 3px;
+      top: 50%;
+      left: 50%;
+      transform-origin: bottom center;
+      opacity: 0.8;
+      filter: drop-shadow(0 0 6px #ffecb3);
+    }
+
+    @keyframes sunRotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* === Butterflies container === */
     #butterflies {
       position: fixed;
       top: 10%;
@@ -136,11 +357,12 @@
       z-index: 1000;
     }
 
+    /* Single butterfly */
     .butterfly {
       position: absolute;
       width: 40px;
       height: 40px;
-      background: url('https://cdn-icons-png.flaticon.com/512/5426/5426522.png') no-repeat center center / contain;
+     background: url('https://cdn-icons-png.flaticon.com/512/5426/5426522.png') no-repeat center center / contain;
       animation: flyAround 12s linear infinite;
       opacity: 0.85;
       filter: drop-shadow(0 0 4px #faa);
@@ -160,8 +382,15 @@
 </head>
 <body class="sunny">
 
-  <!-- Floating butterflies container -->
-  <div id="butterflies" aria-hidden="true"></div>
+  <!-- Floating clouds with words -->
+  <div class="floating-clouds" aria-hidden="true">
+    <div class="cloud">Java</div>
+    <div class="cloud">Git</div>
+    <div class="cloud">Oracle</div>
+    <div class="cloud">Ports</div>
+    <div class="cloud">NetBeans</div>
+    <div class="cloud">TigerVNC</div>
+  </div>
 
   <h1>☁️ Monica's Cloud Quest ☁️</h1>
 
@@ -170,9 +399,9 @@
     <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg" />
   </audio>
 
-  <!-- Sounds -->
+  <!-- Correct and wrong sounds -->
   <audio id="correct-sound" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg" preload="auto"></audio>
-  <audio id="thunder-sound" src="https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg" preload="auto"></audio>
+<audio id="thunder-sound" src="https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg" preload="auto"></audio>
   <audio id="awesome-choice" src="https://actions.google.com/sounds/v1/cartoon/concussive_hit_guitar_boing.ogg" preload="auto"></audio>
 
   <!-- Rain sound -->
@@ -184,6 +413,26 @@
   <!-- Raindrops container -->
   <div id="rain" aria-hidden="true"></div>
 
+  <!-- Sun rays -->
+  <div id="sunrays" aria-hidden="true" aria-label="Sun rays">
+    <!-- 12 rays -->
+    <div class="ray" style="transform: rotate(0deg) translateX(90px);"></div>
+    <div class="ray" style="transform: rotate(30deg) translateX(90px);"></div>
+    <div class="ray" style="transform: rotate(60deg) translateX(90px);"></div>
+    <div class="ray" style="transform: rotate(90deg) translateX(90px);"></div>
+    <div class="ray" style="transform: rotate(120deg) translateX(90px);"></div>
+    <div class="ray" style="transform: rotate(150deg) translateX(90px);"></div>
+    <div class="ray" style="transform: rotate(180deg) translateX(90px);"></div>
+    <div class="ray" style="transform: rotate(210deg) translateX(90px);"></div>
+    <div class="ray" style="transform: rotate(240deg) translateX(90px);"></div>
+    <div class="ray" style="transform: rotate(270deg) translateX(90px);"></div>
+    <div class="ray" style="transform: rotate(300deg) translateX(90px);"></div>
+    <div class="ray" style="transform: rotate(330deg) translateX(90px);"></div>
+  </div>
+
+  <!-- Butterflies container -->
+  <div id="butterflies" aria-hidden="true"></div>
+
   <!-- Interactive Log area -->
   <div id="log" role="main" aria-live="polite" aria-atomic="true" tabindex="0"></div>
 
@@ -191,134 +440,352 @@
   <div class="victory hidden" id="victory" role="alert" aria-live="assertive"></div>
 
   <!-- Cloud button to start -->
-  <button id="start-button" aria-label="Start your quest" onclick="startQuest()">Start Quest</button>
+  <button id="start-btn" class="cloud-button" aria-label="Start the game">☁️ Start</button>
 
+  <!-- Back and Refresh buttons -->
+  <div id="control-buttons" style="margin-top: 25px; display:none;">
+    <button id="back-btn" class="back-btn" aria-label="Go back to previous question">Back</button>
+    <button id="refresh-btn" class="refresh-btn" aria-label="Restart the game">Restart</button>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
   <script>
+    // === Variables & Elements ===
+    const log = document.getElementById('log');
+    const victory = document.getElementById('victory');
+    const startBtn = document.getElementById('start-btn');
+    const backBtn = document.getElementById('back-btn');
+    const refreshBtn = document.getElementById('refresh-btn');
+    const controlButtons = document.getElementById('control-buttons');
+
+    const bgMusic = document.getElementById('bg-music');
+    const correctSound = document.getElementById('correct-sound');
+    const thunderSound = document.getElementById('thunder-sound');
+    const awesomeChoice = document.getElementById('awesome-choice');
+    const rainSound = document.getElementById('rain-sound');
+    const sunnySound = document.getElementById('sunny-sound');
+
+    const rainContainer = document.getElementById('rain');
     const butterfliesContainer = document.getElementById('butterflies');
 
-    // Function to create butterflies
+    let currentLevel = 0;
+    let score = 0;
+
+    // Keep track if rain effect active
+    let isRaining = false;
+
+    // === Original and added questions combined ===
+    const levels = [
+      {
+        question: "Which is the best way to start with Oracle Cloud?",
+        answers: [
+          { text: "Use Facebook Login", correct: false },
+          { text: "Create an Oracle Cloud account", correct: true },
+          { text: "Download Oracle NetBeans", correct: false },
+          { text: "Use AWS instead", correct: false }
+        ],
+        hint: "You need an official Oracle account first."
+      },
+      {
+        question: "Why did Monica create 2 VMs in Oracle Cloud?",
+        answers: [
+          { text: "First VM was too small to run everything", correct: true },
+          { text: "Wanted a backup VM", correct: false },
+          { text: "Just to experiment with multiple VMs", correct: false },
+          { text: "Because of cost savings", correct: false }
+        ],
+        hint: "Capacity was the issue."
+      },
+      {
+        question: "What remote desktop tool did Monica install on her VMs?",
+        answers: [
+          { text: "TigerVNC", correct: true },
+          { text: "TeamViewer", correct: false },
+          { text: "AnyDesk", correct: false },
+          { text: "Remote Desktop Protocol (RDP)", correct: false }
+        ],
+        hint: "Starts with 'Tiger'."
+      },
+      {
+        question: "How did Monica handle opening ports in Oracle Cloud?",
+        answers: [
+          { text: "Added specific ports for services", correct: true },
+          { text: "Blocked all ports for security", correct: false },
+          { text: "Left default ports open", correct: false },
+          { text: "Didn't configure ports", correct: false }
+        ],
+        hint: "She customized port access."
+      },
+      {
+        question: "Which tools did Monica learn to install on her VMs?",
+        answers: [
+          { text: "TigerVNC, Git, Java Learning", correct: true },
+          { text: "Docker, Kubernetes", correct: false },
+          { text: "Photoshop, Illustrator", correct: false },
+          { text: "VMware, Hyper-V", correct: false }
+        ],
+        hint: "Includes version control and remote desktop."
+      },
+      {
+        question: "Monica learned to code Java. Which IDE is popular for Java development?",
+        answers: [
+          { text: "NetBeans", correct: true },
+          { text: "Visual Studio Code", correct: false },
+          { text: "Sublime Text", correct: false },
+          { text: "PyCharm", correct: false }
+        ],
+        hint: "Oracle owns this IDE."
+      },
+      {
+        question: "Let's try a simple Java demo! Type exactly: System.out.println(\"Hello, Oracle!\");",
+        demo: true,
+        hint: "Match capitalization, punctuation exactly.",
+        correctDemoInput: 'System.out.println("Hello, Oracle!");',
+        demoSuccessMsg: "Great job! You've run your first Java print statement!"
+      }
+    ];
+
+    // === Rain effect: create raindrops ===
+    function createRainDrops(numDrops = 50) {
+      rainContainer.innerHTML = '';
+      for (let i = 0; i < numDrops; i++) {
+        const drop = document.createElement('div');
+        drop.classList.add('raindrop');
+        drop.style.left = Math.random() * 100 + 'vw';
+        drop.style.animationDuration = (0.7 + Math.random() * 0.8) + 's';
+        drop.style.animationDelay = (Math.random() * 5) + 's';
+        drop.style.opacity = (0.3 + Math.random() * 0.7).toFixed(2);
+        drop.style.width = (1 + Math.random() * 3) + 'px';
+        drop.style.height = (8 + Math.random() * 12) + 'px';
+        rainContainer.appendChild(drop);
+      }
+    }
+
+    // Start rain
+    function startRain() {
+      if (!isRaining) {
+        createRainDrops(80);
+        rainSound.volume = 0.15;
+        rainSound.play();
+        isRaining = true;
+        document.body.classList.add('rainy');
+        document.body.classList.remove('sunny');
+        sunnySound.pause();
+      }
+    }
+
+    // Stop rain
+    function stopRain() {
+      if (isRaining) {
+        rainContainer.innerHTML = '';
+        rainSound.pause();
+        isRaining = false;
+        document.body.classList.remove('rainy');
+        document.body.classList.add('sunny');
+        sunnySound.volume = 0.15;
+        sunnySound.play();
+      }
+    }
+
+    // === Create butterflies and animate ===
     function createButterflies(num = 6) {
-      butterfliesContainer.innerHTML = ''; // Clear previous butterflies
+      butterfliesContainer.innerHTML = '';
       for (let i = 0; i < num; i++) {
         const butterfly = document.createElement('div');
         butterfly.classList.add('butterfly');
-        butterfly.style.top = `${Math.random() * 70 + 10}vh`; // Random vertical position
-        butterfly.style.left = `${Math.random() * 100}vw`; // Random horizontal position
-        butterfly.style.animationDelay = `${Math.random() * 12}s`; // Random animation delay
+        // Random start position and delay for smooth flying effect
+        butterfly.style.top = `${Math.random() * 70 + 10}vh`;
+        butterfly.style.left = `${Math.random() * 100}vw`;
+        butterfly.style.animationDelay = `${Math.random() * 12}s`;
         butterfliesContainer.appendChild(butterfly);
       }
     }
 
-    // Call the function to create butterflies when the page loads
-    createButterflies(6);
+    createButterflies();
 
-    // Function to toggle between rain and sunny weather
-    function startQuest() {
-      document.body.classList.toggle('rainy');
-      document.body.classList.toggle('sunny');
-      createButterflies(6); // Update butterflies with new weather
+    // === Show current question or demo ===
+    function showLevel() {
+      // Reset rain & sounds
+      stopRain();
 
-      // Toggle sounds based
-```
+      // Show back and refresh buttons except for first question
+      controlButtons.style.display = currentLevel === 0 ? 'none' : 'block';
 
+      log.innerHTML = '';
+      victory.classList.add('hidden');
 
-on weather
-const rainSound = document.getElementById('rain-sound');
-const sunnySound = document.getElementById('sunny-sound');
-const bgMusic = document.getElementById('bg-music');
+      if (currentLevel >= levels.length) {
+        endGame();
+        return;
+      }
 
-```
-  if (document.body.classList.contains('rainy')) {
-    rainSound.play();
-    sunnySound.pause();
-    bgMusic.pause();
-  } else {
-    sunnySound.play();
-    rainSound.pause();
-    bgMusic.play();
-  }
-}
+      const level = levels[currentLevel];
 
-// === Questions and Answers ===
-const levels = [
-  {
-    question: "Which is the best way to start with Oracle Cloud?",
-    answers: [
-      { text: "Use Facebook Login", correct: false },
-      { text: "Create an Oracle Cloud account", correct: true },
-      { text: "Download Oracle NetBeans", correct: false },
-      { text: "Use AWS instead", correct: false }
-    ],
-    hint: "You need an official Oracle account first."
-  },
-  {
-    question: "Why did Monica create 2 VMs in Oracle Cloud?",
-    answers: [
-      { text: "First VM was too small to run everything", correct: true },
-      { text: "Wanted a backup VM", correct: false },
-      { text: "Just to experiment with multiple VMs", correct: false },
-      { text: "Because of cost savings", correct: false }
-    ],
-    hint: "Capacity was the issue."
-  },
-  // Additional questions go here...
-];
+      const questionEl = document.createElement('h2');
+      questionEl.textContent = level.question;
+      log.appendChild(questionEl);
 
-let currentLevel = 0;
-let score = 0;
+      // Show hint
+      const hintEl = document.createElement('p');
+      hintEl.style.fontStyle = 'italic';
+      hintEl.style.color = '#666';
+      hintEl.textContent = 'Hint: ' + level.hint;
+      log.appendChild(hintEl);
 
-// Show current question or demo
-function showLevel() {
-  const log = document.getElementById('log');
-  log.innerHTML = '';
+      if (level.demo) {
+        // Demo input box for Java print statement
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.style.fontSize = '1.1em';
+        input.style.width = '85%';
+        input.style.padding = '10px';
+        input.setAttribute('aria-label', 'Java demo input');
+        input.value = '';
+        log.appendChild(input);
 
-  const level = levels[currentLevel];
-  const questionEl = document.createElement('h2');
-  questionEl.textContent = level.question;
-  log.appendChild(questionEl);
+        const runBtn = document.createElement('button');
+        runBtn.textContent = 'Run Code';
+        runBtn.style.marginTop = '12px';
+        runBtn.addEventListener('click', () => {
+          const userInput = input.value.trim();
+          if (userInput === level.correctDemoInput) {
+            awesomeChoice.play();
+            alert(level.demoSuccessMsg);
+            score++;
+            currentLevel++;
+            showLevel();
+          } else {
+            thunderSound.play();
+            startRain();
+            alert("Oops, that's not quite right. Try again!");
+          }
+        });
+        log.appendChild(runBtn);
 
-  const hintEl = document.createElement('p');
-  hintEl.style.fontStyle = 'italic';
-  hintEl.style.color = '#666';
-  hintEl.textContent = 'Hint: ' + level.hint;
-  log.appendChild(hintEl);
+        // Enter key runs code
+        input.addEventListener('keydown', e => {
+          if (e.key === 'Enter') runBtn.click();
+        });
 
-  const optionsDiv = document.createElement('div');
-  level.answers.forEach(answer => {
-    const btn = document.createElement('button');
-    btn.textContent = answer.text;
-    btn.addEventListener('click', () => {
-      if (answer.correct) {
-        score++;
-        currentLevel++;
-        showLevel();
       } else {
-        alert("Oops, try again!");
+        // Show answer options as buttons
+        const optionsDiv = document.createElement('div');
+        optionsDiv.id = 'options';
+
+        level.answers.forEach(answer => {
+          const btn = document.createElement('button');
+          btn.textContent = answer.text;
+          btn.setAttribute('aria-label', `Answer option: ${answer.text}`);
+          btn.addEventListener('click', () => {
+            if (answer.correct) {
+              correctSound.play();
+              score++;
+              stopRain();
+              btn.style.background = '#00cc44';
+              setTimeout(() => {
+                currentLevel++;
+                showLevel();
+              }, 1100);
+            } else {
+              thunderSound.play();
+              startRain();
+              btn.style.background = '#cc3300';
+              btn.disabled = true;
+              // Let user retry or choose another option without locking UI
+            }
+          });
+          optionsDiv.appendChild(btn);
+        });
+        log.appendChild(optionsDiv);
+      }
+    }
+
+    // === End of game: show victory and confetti ===
+    function endGame() {
+      log.classList.add('hidden');
+      victory.classList.remove('hidden');
+      victory.innerHTML = `
+        🎉 Congratulations! You completed Monica's Cloud Quest with a score of ${score} out of ${levels.length}! ☁️🌈
+        <br><br>
+        <strong>Message to Ben:</strong> Thanks for inspiring me to create this learning journey! 🚀
+      `;
+      bgMusic.pause();
+      rainSound.pause();
+      sunnySound.pause();
+
+      // Fire confetti for 6 seconds
+      const duration = 6 * 1000;
+      const end = Date.now() + duration;
+
+      (function frame() {
+        confetti({
+          particleCount: 6,
+          angle: 60,
+          spread: 70,
+          origin: { x: 0 }
+        });
+        confetti({
+          particleCount: 6,
+          angle: 120,
+          spread: 70,
+          origin: { x: 1 }
+        });
+
+        if (Date.now() < end) {
+          requestAnimationFrame(frame);
+        }
+      })();
+
+      // Show refresh button only
+      controlButtons.style.display = 'block';
+      backBtn.style.display = 'none';
+    }
+
+    // === Event Listeners ===
+
+    // Start game
+    startBtn.addEventListener('click', () => {
+      startBtn.classList.add('hidden');
+      log.classList.remove('hidden');
+      victory.classList.add('hidden');
+      score = 0;
+      currentLevel = 0;
+      bgMusic.volume = 0.05; // Lower volume
+      bgMusic.play();
+      sunnySound.volume = 0.1;
+      sunnySound.play();
+      showLevel();
+    });
+
+    // Back button to go back one question
+    backBtn.addEventListener('click', () => {
+      if (currentLevel > 0) {
+        currentLevel--;
+        showLevel();
       }
     });
-    optionsDiv.appendChild(btn);
-  });
-  log.appendChild(optionsDiv);
-}
 
-// Start game when button clicked
-document.getElementById('start-button').addEventListener('click', () => {
-  score = 0;
-  currentLevel = 0;
-  showLevel();
-});
-```
+    // Refresh button to restart game fully
+    refreshBtn.addEventListener('click', () => {
+      score = 0;
+      currentLevel = 0;
+      victory.classList.add('hidden');
+      log.classList.remove('hidden');
+      startBtn.classList.add('hidden');
+      bgMusic.volume = 0.05;
+      bgMusic.play();
+      sunnySound.volume = 0.1;
+      sunnySound.play();
+      showLevel();
+    });
+
+    // Accessibility: focus log area after each level
+    const observer = new MutationObserver(() => {
+      log.focus();
+    });
+    observer.observe(log, { childList: true });
 
   </script>
 
 </body>
 </html>
-```
-
-### Fixes and Additions:
-
-* **Quiz Questions and Answers**: I added a small set of sample questions and answers. Feel free to expand the `levels` array with more questions.
-* **Butterflies**: The butterflies' animation is working as intended.
-* **Weather Toggle**: You can switch between rainy and sunny weather by clicking the start button.
-
-Now, the quiz works alongside the butterflies and weather effects. You can start the quiz by clicking the "Start Quest" button!
