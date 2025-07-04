@@ -1,9 +1,3 @@
-It seems like something went wrong when trying to update the code! Let me correct that and give you the complete version back as you requested, with the necessary adjustments intact. One moment!
-
-
-Here’s the corrected code with all the changes:
-
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -263,7 +257,7 @@ Here’s the corrected code with all the changes:
       padding: 10px 25px;
       font-weight: bold;
       color: #336699;
-       box-shadow: 0 0 15px #ccc;
+      box-shadow: 0 0 15px #ccc;
       animation: floatClouds 6s ease-in-out infinite alternate;
       font-size: 1.2rem;
       user-select: none;
@@ -318,42 +312,40 @@ Here’s the corrected code with all the changes:
       }
     }
 
-   /* Sun container at top-left */
-#sunrays {
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  width: 120px;
-  height: 120px;
-  pointer-events: none;
-  z-index: 9999;
-  user-select: none;
-  filter: drop-shadow(0 0 8px #ffd54f);
-  animation: sunRotate 25s linear infinite;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: radial-gradient(circle at center, #fffa90 0%, #ffdd3c 70%);
-  box-shadow: 0 0 25px 8px #ffec60cc;
-  font-size: 64px;
-  color: #ffaa00;
-  font-weight: bold;
-}
-/* Sun rays smaller and around sun face */
-#sunrays .ray {
-  position: absolute;
-  width: 6px;
-  height: 25px;
-  background: #ffd54f;
-  border-radius: 3px;
-  top: 50%;
-  left: 50%;
-  transform-origin: bottom center;
-  opacity: 0.85;
-  filter: drop-shadow(0 0 5px #ffecb3);
-}
-
+    /* Sun container moved inline */
+    #sunrays {
+      position: relative; /* changed from fixed */
+      width: 80px;
+      height: 80px;
+      margin-left: 15px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      filter: drop-shadow(0 0 8px #ffd54f);
+      animation: sunRotate 25s linear infinite;
+      border-radius: 50%;
+      background: radial-gradient(circle at center, #fffa90 0%, #ffdd3c 70%);
+      box-shadow: 0 0 25px 8px #ffec60cc;
+      font-size: 48px;
+      color: #ffaa00;
+      font-weight: bold;
+      top: auto;
+      left: auto;
+    }
+    /* Sun rays smaller and around sun face */
+    #sunrays .ray {
+      position: absolute;
+      width: 4px;
+      height: 18px;
+      background: #ffd54f;
+      border-radius: 3px;
+      top: 50%;
+      left: 50%;
+      transform-origin: bottom center;
+      opacity: 0.85;
+      filter: drop-shadow(0 0 5px #ffecb3);
+    }
 
     @keyframes sunRotate {
       0% { transform: rotate(0deg); }
@@ -392,7 +384,6 @@ Here’s the corrected code with all the changes:
       75% { transform: translate(40vw, 15vh) rotate(-45deg); }
       100% { transform: translate(0, 0) rotate(0deg); }
     }
-
   </style>
 </head>
 <body class="sunny">
@@ -416,7 +407,7 @@ Here’s the corrected code with all the changes:
 
   <!-- Correct and wrong sounds -->
   <audio id="correct-sound" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg" preload="auto"></audio>
-<audio id="thunder-sound" src="https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg" preload="auto"></audio>
+  <audio id="thunder-sound" src="https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg" preload="auto"></audio>
   <audio id="awesome-choice" src="https://actions.google.com/sounds/v1/cartoon/concussive_hit_guitar_boing.ogg" preload="auto"></audio>
 
   <!-- Rain sound -->
@@ -427,25 +418,6 @@ Here’s the corrected code with all the changes:
 
   <!-- Raindrops container -->
   <div id="rain" aria-hidden="true"></div>
-
-<div id="sunrays" aria-hidden="true" aria-label="Happy sun with rays">
-  <div class="ray"></div>
-  <div class="ray"></div>
-  <div class="ray"></div>
-  <div class="ray"></div>
-  <div class="ray"></div>
-  <div class="ray"></div>
-  <div class="ray"></div>
-  <div class="ray"></div>
-  <div class="ray"></div>
-  <div class="ray"></div>
-  <div class="ray"></div>
-  <div class="ray"></div>
-  <!-- Sun face emoji in the center -->
-  <div aria-hidden="true" style="position: absolute; font-size: 3.5rem; user-select: none; pointer-events: none; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-    😊
-  </div>
-</div>
 
   <!-- Butterflies container -->
   <div id="butterflies" aria-hidden="true"></div>
@@ -474,31 +446,187 @@ Here’s the corrected code with all the changes:
     const backBtn = document.getElementById('back-btn');
     const refreshBtn = document.getElementById('refresh-btn');
     const controlButtons = document.getElementById('control-buttons');
-    const rain = document.getElementById('rain');
-    const butterflies = document.getElementById('butterflies');
-    const sunrays = document.getElementById('sunrays');
+
+    const bgMusic = document.getElementById('bg-music');
     const correctSound = document.getElementById('correct-sound');
     const thunderSound = document.getElementById('thunder-sound');
     const awesomeChoice = document.getElementById('awesome-choice');
     const rainSound = document.getElementById('rain-sound');
     const sunnySound = document.getElementById('sunny-sound');
-    const clouds = document.querySelector('.floating-clouds');
 
-    // === Start/Stop Music & Sound Effects ===
-    const startBackgroundMusic = () => {
-      if (sunnySound.paused) sunnySound.play();
-      if (rainSound.paused) rainSound.play();
-    };
-    
-    // === Event Listeners ===
-    startBtn.addEventListener('click', function () {
-      startBackgroundMusic();
-      startBtn.classList.add('hidden');
+    const rainContainer = document.getElementById('rain');
+    const butterfliesContainer = document.getElementById('butterflies');
+
+    let currentLevel = 0;
+    let score = 0;
+
+    // Keep track if rain effect active
+    let isRaining = false;
+
+    // === Original and added questions combined ===
+    const levels = [
+      {
+        question: "Which is the best way to start with Oracle Cloud?",
+        options: [
+          { text: "Use Facebook Login", fail: true },
+          { text: "Create Oracle Account", fail: false },
+          { text: "Google Cloud Console", fail: true },
+          { text: "AWS Console", fail: true }
+        ],
+        feedback: "Oracle requires creating a dedicated account. Facebook login won't work for Oracle Cloud."
+      },
+      {
+        question: "Which port does NetBeans use by default for debugging?",
+        options: [
+          { text: "9000", fail: true },
+          { text: "8000", fail: false },
+          { text: "8080", fail: true },
+          { text: "3306", fail: true }
+        ],
+        feedback: "NetBeans debug port is 8000 by default."
+      },
+      {
+        question: "What is the main purpose of TigerVNC?",
+        options: [
+          { text: "Cloud Database", fail: true },
+          { text: "Remote Desktop", fail: false },
+          { text: "Version Control", fail: true },
+          { text: "Load Testing Tool", fail: true }
+        ],
+        feedback: "TigerVNC is used for remote desktop sessions."
+      }
+    ];
+
+    // === Utility: Create the sun element with rays ===
+    function createSunElement() {
+      const sun = document.createElement('div');
+      sun.id = 'sunrays';
+
+      // Create rays (12 rays around sun)
+      for (let i = 0; i < 12; i++) {
+        const ray = document.createElement('div');
+        ray.className = 'ray';
+        ray.style.transform = `rotate(${i * 30}deg) translateY(-30px)`;
+        sun.appendChild(ray);
+      }
+
+      sun.textContent = '☀️'; // Sun emoji center
+      return sun;
+    }
+
+    // === Start game ===
+    startBtn.addEventListener('click', () => {
+      startBtn.style.display = 'none';
       controlButtons.style.display = 'block';
+      currentLevel = 0;
+      score = 0;
+      log.innerHTML = '';
+      victory.classList.add('hidden');
+      showLevel(currentLevel);
+      bgMusic.volume = 0.05;
+      bgMusic.play();
     });
-    
+
+    // === Back button ===
+    backBtn.addEventListener('click', () => {
+      if (currentLevel > 0) {
+        currentLevel--;
+        log.innerHTML = '';
+        victory.classList.add('hidden');
+        showLevel(currentLevel);
+      }
+    });
+
+    // === Refresh button ===
+    refreshBtn.addEventListener('click', () => {
+      location.reload();
+    });
+
+    // === Show a level question and options ===
+    function showLevel(levelIndex) {
+      log.innerHTML = '';
+      victory.classList.add('hidden');
+
+      const level = levels[levelIndex];
+
+      // Container flex for question + sun (centered)
+      const questionContainer = document.createElement('div');
+      questionContainer.style.display = 'flex';
+      questionContainer.style.justifyContent = 'center';
+      questionContainer.style.alignItems = 'center';
+      questionContainer.style.marginBottom = '25px';
+
+      // Question text element
+      const questionEl = document.createElement('h2');
+      questionEl.textContent = level.question;
+      questionEl.style.margin = '0';
+      questionEl.style.fontWeight = '700';
+
+      // Sun element
+      const sun = createSunElement();
+
+      // Append question and sun to container
+      questionContainer.appendChild(questionEl);
+      questionContainer.appendChild(sun);
+
+      // Append container to log
+      log.appendChild(questionContainer);
+
+      // Options container
+      const optionsDiv = document.createElement('div');
+      optionsDiv.id = 'options';
+
+      // Add option buttons
+      level.options.forEach((option, idx) => {
+        const btn = document.createElement('button');
+        btn.textContent = option.text;
+        btn.setAttribute('aria-label', option.text);
+
+        btn.addEventListener('click', () => {
+          if (option.fail) {
+            thunderSound.currentTime = 0;
+            thunderSound.play();
+            alert(`Oops! ${level.feedback}`);
+            // Shake or highlight?
+            btn.style.backgroundColor = '#ff6666';
+            setTimeout(() => {
+              btn.style.backgroundColor = '';
+            }, 600);
+          } else {
+            correctSound.currentTime = 0;
+            correctSound.play();
+            score++;
+            currentLevel++;
+            if (currentLevel >= levels.length) {
+              showVictory();
+            } else {
+              showLevel(currentLevel);
+            }
+          }
+        });
+
+        optionsDiv.appendChild(btn);
+      });
+
+      log.appendChild(optionsDiv);
+    }
+
+    // === Show victory message ===
+    function showVictory() {
+      log.innerHTML = '';
+      victory.classList.remove('hidden');
+      victory.textContent = `🎉 Congratulations! You completed the Cloud Quest with a score of ${score} out of ${levels.length}! 🎉`;
+
+      // Confetti effect
+      confetti({
+        particleCount: 150,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
+
+      bgMusic.pause();
+    }
   </script>
+
 </body>
 </html>
-
-```
