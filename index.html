@@ -216,7 +216,7 @@
 hint: "Includes version control and remote desktop."
 },
 {
-question: "Monica learned to code Java. Which IDE is popular for Java development?",
+question: "Monica is learning to code Java. Which IDE is popular for Java development?",
 answers: \[
 { text: "PyCharm", correct: false },
 { text: "NetBeans", correct: true },
@@ -226,12 +226,13 @@ answers: \[
 hint: "Oracle owns this IDE."
 },
 {
-question: "Let's try a simple Java demo! Type exactly: System.out.println("Hello, Oracle!");",
-demo: true,
-hint: "Match capitalization, punctuation exactly.",
-correctDemoInput: 'System.out.println("Hello, Oracle!");',
-demoSuccessMsg: "Great job! You've run your first Java print statement!"
+  question: "Let's try a simple Java demo! Type exactly: System.out.println('Hello, Oracle!');",
+  demo: true,
+  hint: "Match capitalization, punctuation exactly.",
+  correctDemoInput: 'System.out.println("Hello, Oracle!");',
+  demoSuccessMsg: "Great job! You've run your first Java print statement!"
 }
+
 ];
 
 ```
@@ -364,6 +365,3 @@ function endGame() {
   </script>
 </body>
 </html>
-```
-
-Now, the **questions** should show up properly when you start the game. Let me know how it works!
