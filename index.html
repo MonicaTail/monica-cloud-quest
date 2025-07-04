@@ -1,3 +1,6 @@
+this was the code: 
+
+keep this code but ONLY chage the placing of the sun and the other changes we metnioned. don't fuck with anythingesle
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -312,39 +315,32 @@
       }
     }
 
-    /* Sun container moved inline */
+    /* === Sun rays container */
     #sunrays {
-      position: relative; /* changed from fixed */
-      width: 80px;
-      height: 80px;
-      margin-left: 15px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      width: 200px;
+      height: 200px;
+      margin-left: -100px;
+      pointer-events: none;
+      z-index: 9999;
       user-select: none;
-      filter: drop-shadow(0 0 8px #ffd54f);
-      animation: sunRotate 25s linear infinite;
-      border-radius: 50%;
-      background: radial-gradient(circle at center, #fffa90 0%, #ffdd3c 70%);
-      box-shadow: 0 0 25px 8px #ffec60cc;
-      font-size: 48px;
-      color: #ffaa00;
-      font-weight: bold;
-      top: auto;
-      left: auto;
+      filter: drop-shadow(0 0 12px #ffd54f);
+      animation: sunRotate 20s linear infinite;
     }
-    /* Sun rays smaller and around sun face */
+
     #sunrays .ray {
       position: absolute;
-      width: 4px;
-      height: 18px;
+      width: 8px;
+      height: 40px;
       background: #ffd54f;
       border-radius: 3px;
       top: 50%;
       left: 50%;
       transform-origin: bottom center;
-      opacity: 0.85;
-      filter: drop-shadow(0 0 5px #ffecb3);
+      opacity: 0.8;
+      filter: drop-shadow(0 0 6px #ffecb3);
     }
 
     @keyframes sunRotate {
@@ -384,6 +380,7 @@
       75% { transform: translate(40vw, 15vh) rotate(-45deg); }
       100% { transform: translate(0, 0) rotate(0deg); }
     }
+
   </style>
 </head>
 <body class="sunny">
@@ -407,7 +404,7 @@
 
   <!-- Correct and wrong sounds -->
   <audio id="correct-sound" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg" preload="auto"></audio>
-  <audio id="thunder-sound" src="https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg" preload="auto"></audio>
+<audio id="thunder-sound" src="https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg" preload="auto"></audio>
   <audio id="awesome-choice" src="https://actions.google.com/sounds/v1/cartoon/concussive_hit_guitar_boing.ogg" preload="auto"></audio>
 
   <!-- Rain sound -->
@@ -418,6 +415,23 @@
 
   <!-- Raindrops container -->
   <div id="rain" aria-hidden="true"></div>
+
+  <!-- Sun rays -->
+  <div id="sunrays" aria-hidden="true" aria-label="Sun rays">
+    <!-- 12 rays -->
+    <div class="ray" style="transform: rotate(0deg) translateX(90px);"></div>
+    <div class="ray" style="transform: rotate(30deg) translateX(90px);"></div>
+    <div class="ray" style="transform: rotate(60deg) translateX(90px);"></div>
+    <div class="ray" style="transform: rotate(90deg) translateX(90px);"></div>
+    <div class="ray" style="transform: rotate(120deg) translateX(90px);"></div>
+    <div class="ray" style="transform: rotate(150deg) translateX(90px);"></div>
+    <div class="ray" style="transform: rotate(180deg) translateX(90px);"></div>
+    <div class="ray" style="transform: rotate(210deg) translateX(90px);"></div>
+    <div class="ray" style="transform: rotate(240deg) translateX(90px);"></div>
+    <div class="ray" style="transform: rotate(270deg) translateX(90px);"></div>
+    <div class="ray" style="transform: rotate(300deg) translateX(90px);"></div>
+    <div class="ray" style="transform: rotate(330deg) translateX(90px);"></div>
+  </div>
 
   <!-- Butterflies container -->
   <div id="butterflies" aria-hidden="true"></div>
@@ -467,165 +481,313 @@
     const levels = [
       {
         question: "Which is the best way to start with Oracle Cloud?",
-        options: [
-          { text: "Use Facebook Login", fail: true },
-          { text: "Create Oracle Account", fail: false },
-          { text: "Google Cloud Console", fail: true },
-          { text: "AWS Console", fail: true }
+        answers: [
+          { text: "Use Facebook Login", correct: false },
+          { text: "Create an Oracle Cloud account", correct: true },
+          { text: "Download Oracle NetBeans", correct: false },
+          { text: "Use AWS instead", correct: false }
         ],
-        feedback: "Oracle requires creating a dedicated account. Facebook login won't work for Oracle Cloud."
+        hint: "You need an official Oracle account first."
       },
       {
-        question: "Which port does NetBeans use by default for debugging?",
-        options: [
-          { text: "9000", fail: true },
-          { text: "8000", fail: false },
-          { text: "8080", fail: true },
-          { text: "3306", fail: true }
+        question: "Why did Monica create 2 VMs in Oracle Cloud?",
+        answers: [
+          { text: "First VM was too small to run everything", correct: true },
+          { text: "Wanted a backup VM", correct: false },
+          { text: "Just to experiment with multiple VMs", correct: false },
+          { text: "Because of cost savings", correct: false }
         ],
-        feedback: "NetBeans debug port is 8000 by default."
+        hint: "Capacity was the issue."
       },
       {
-        question: "What is the main purpose of TigerVNC?",
-        options: [
-          { text: "Cloud Database", fail: true },
-          { text: "Remote Desktop", fail: false },
-          { text: "Version Control", fail: true },
-          { text: "Load Testing Tool", fail: true }
+        question: "What remote desktop tool did Monica install on her VMs?",
+        answers: [
+          { text: "TigerVNC", correct: true },
+          { text: "TeamViewer", correct: false },
+          { text: "AnyDesk", correct: false },
+          { text: "Remote Desktop Protocol (RDP)", correct: false }
         ],
-        feedback: "TigerVNC is used for remote desktop sessions."
+        hint: "Starts with 'Tiger'."
+      },
+      {
+        question: "How did Monica handle opening ports in Oracle Cloud?",
+        answers: [
+          { text: "Added specific ports for services", correct: true },
+          { text: "Blocked all ports for security", correct: false },
+          { text: "Left default ports open", correct: false },
+          { text: "Didn't configure ports", correct: false }
+        ],
+        hint: "She customized port access."
+      },
+      {
+        question: "Which tools did Monica learn to install on her VMs?",
+        answers: [
+          { text: "TigerVNC, Git, Java Learning", correct: true },
+          { text: "Docker, Kubernetes", correct: false },
+          { text: "Photoshop, Illustrator", correct: false },
+          { text: "VMware, Hyper-V", correct: false }
+        ],
+        hint: "Includes version control and remote desktop."
+      },
+      {
+        question: "Monica learned to code Java. Which IDE is popular for Java development?",
+        answers: [
+          { text: "NetBeans", correct: true },
+          { text: "Visual Studio Code", correct: false },
+          { text: "Sublime Text", correct: false },
+          { text: "PyCharm", correct: false }
+        ],
+        hint: "Oracle owns this IDE."
+      },
+      {
+        question: "Let's try a simple Java demo! Type exactly: System.out.println(\"Hello, Oracle!\");",
+        demo: true,
+        hint: "Match capitalization, punctuation exactly.",
+        correctDemoInput: 'System.out.println("Hello, Oracle!");',
+        demoSuccessMsg: "Great job! You've run your first Java print statement!"
       }
     ];
 
-    // === Utility: Create the sun element with rays ===
-    function createSunElement() {
-      const sun = document.createElement('div');
-      sun.id = 'sunrays';
-
-      // Create rays (12 rays around sun)
-      for (let i = 0; i < 12; i++) {
-        const ray = document.createElement('div');
-        ray.className = 'ray';
-        ray.style.transform = `rotate(${i * 30}deg) translateY(-30px)`;
-        sun.appendChild(ray);
+    // === Rain effect: create raindrops ===
+    function createRainDrops(numDrops = 50) {
+      rainContainer.innerHTML = '';
+      for (let i = 0; i < numDrops; i++) {
+        const drop = document.createElement('div');
+        drop.classList.add('raindrop');
+        drop.style.left = Math.random() * 100 + 'vw';
+        drop.style.animationDuration = (0.7 + Math.random() * 0.8) + 's';
+        drop.style.animationDelay = (Math.random() * 5) + 's';
+        drop.style.opacity = (0.3 + Math.random() * 0.7).toFixed(2);
+        drop.style.width = (1 + Math.random() * 3) + 'px';
+        drop.style.height = (8 + Math.random() * 12) + 'px';
+        rainContainer.appendChild(drop);
       }
-
-      sun.textContent = '☀️'; // Sun emoji center
-      return sun;
     }
 
-    // === Start game ===
-    startBtn.addEventListener('click', () => {
-      startBtn.style.display = 'none';
-      controlButtons.style.display = 'block';
-      currentLevel = 0;
-      score = 0;
+    // Start rain
+    function startRain() {
+      if (!isRaining) {
+        createRainDrops(80);
+        rainSound.volume = 0.15;
+        rainSound.play();
+        isRaining = true;
+        document.body.classList.add('rainy');
+        document.body.classList.remove('sunny');
+        sunnySound.pause();
+      }
+    }
+
+    // Stop rain
+    function stopRain() {
+      if (isRaining) {
+        rainContainer.innerHTML = '';
+        rainSound.pause();
+        isRaining = false;
+        document.body.classList.remove('rainy');
+        document.body.classList.add('sunny');
+        sunnySound.volume = 0.15;
+        sunnySound.play();
+      }
+    }
+
+    // === Create butterflies and animate ===
+    function createButterflies(num = 6) {
+      butterfliesContainer.innerHTML = '';
+      for (let i = 0; i < num; i++) {
+        const butterfly = document.createElement('div');
+        butterfly.classList.add('butterfly');
+        // Random start position and delay for smooth flying effect
+        butterfly.style.top = ${Math.random() * 70 + 10}vh;
+        butterfly.style.left = ${Math.random() * 100}vw;
+        butterfly.style.animationDelay = ${Math.random() * 12}s;
+        butterfliesContainer.appendChild(butterfly);
+      }
+    }
+
+    createButterflies();
+
+    // === Show current question or demo ===
+    function showLevel() {
+      // Reset rain & sounds
+      stopRain();
+
+      // Show back and refresh buttons except for first question
+      controlButtons.style.display = currentLevel === 0 ? 'none' : 'block';
+
       log.innerHTML = '';
       victory.classList.add('hidden');
-      showLevel(currentLevel);
-      bgMusic.volume = 0.05;
+
+      if (currentLevel >= levels.length) {
+        endGame();
+        return;
+      }
+
+      const level = levels[currentLevel];
+
+      const questionEl = document.createElement('h2');
+      questionEl.textContent = level.question;
+      log.appendChild(questionEl);
+
+      // Show hint
+      const hintEl = document.createElement('p');
+      hintEl.style.fontStyle = 'italic';
+      hintEl.style.color = '#666';
+      hintEl.textContent = 'Hint: ' + level.hint;
+      log.appendChild(hintEl);
+
+      if (level.demo) {
+        // Demo input box for Java print statement
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.style.fontSize = '1.1em';
+        input.style.width = '85%';
+        input.style.padding = '10px';
+        input.setAttribute('aria-label', 'Java demo input');
+        input.value = '';
+        log.appendChild(input);
+
+        const runBtn = document.createElement('button');
+        runBtn.textContent = 'Run Code';
+        runBtn.style.marginTop = '12px';
+        runBtn.addEventListener('click', () => {
+          const userInput = input.value.trim();
+          if (userInput === level.correctDemoInput) {
+            awesomeChoice.play();
+            alert(level.demoSuccessMsg);
+            score++;
+            currentLevel++;
+            showLevel();
+          } else {
+            thunderSound.play();
+            startRain();
+            alert("Oops, that's not quite right. Try again!");
+          }
+        });
+        log.appendChild(runBtn);
+
+        // Enter key runs code
+        input.addEventListener('keydown', e => {
+          if (e.key === 'Enter') runBtn.click();
+        });
+
+      } else {
+        // Show answer options as buttons
+        const optionsDiv = document.createElement('div');
+        optionsDiv.id = 'options';
+
+        level.answers.forEach(answer => {
+          const btn = document.createElement('button');
+          btn.textContent = answer.text;
+          btn.setAttribute('aria-label', Answer option: ${answer.text});
+          btn.addEventListener('click', () => {
+            if (answer.correct) {
+              correctSound.play();
+              score++;
+              stopRain();
+              btn.style.background = '#00cc44';
+              setTimeout(() => {
+                currentLevel++;
+                showLevel();
+              }, 1100);
+            } else {
+              thunderSound.play();
+              startRain();
+              btn.style.background = '#cc3300';
+              btn.disabled = true;
+              // Let user retry or choose another option without locking UI
+            }
+          });
+          optionsDiv.appendChild(btn);
+        });
+        log.appendChild(optionsDiv);
+      }
+    }
+
+    // === End of game: show victory and confetti ===
+    function endGame() {
+      log.classList.add('hidden');
+      victory.classList.remove('hidden');
+      victory.innerHTML = 
+        🎉 Congratulations! You completed Monica's Cloud Quest with a score of ${score} out of ${levels.length}! ☁️🌈
+        <br><br>
+        <strong>Message to Ben:</strong> Thanks for inspiring me to create this learning journey! 🚀
+      ;
+      bgMusic.pause();
+      rainSound.pause();
+      sunnySound.pause();
+
+      // Fire confetti for 6 seconds
+      const duration = 6 * 1000;
+      const end = Date.now() + duration;
+
+      (function frame() {
+        confetti({
+          particleCount: 6,
+          angle: 60,
+          spread: 70,
+          origin: { x: 0 }
+        });
+        confetti({
+          particleCount: 6,
+          angle: 120,
+          spread: 70,
+          origin: { x: 1 }
+        });
+
+        if (Date.now() < end) {
+          requestAnimationFrame(frame);
+        }
+      })();
+
+      // Show refresh button only
+      controlButtons.style.display = 'block';
+      backBtn.style.display = 'none';
+    }
+
+    // === Event Listeners ===
+
+    // Start game
+    startBtn.addEventListener('click', () => {
+      startBtn.classList.add('hidden');
+      log.classList.remove('hidden');
+      victory.classList.add('hidden');
+      score = 0;
+      currentLevel = 0;
+      bgMusic.volume = 0.05; // Lower volume
       bgMusic.play();
+      sunnySound.volume = 0.1;
+      sunnySound.play();
+      showLevel();
     });
 
-    // === Back button ===
+    // Back button to go back one question
     backBtn.addEventListener('click', () => {
       if (currentLevel > 0) {
         currentLevel--;
-        log.innerHTML = '';
-        victory.classList.add('hidden');
-        showLevel(currentLevel);
+        showLevel();
       }
     });
 
-    // === Refresh button ===
+    // Refresh button to restart game fully
     refreshBtn.addEventListener('click', () => {
-      location.reload();
+      score = 0;
+      currentLevel = 0;
+      victory.classList.add('hidden');
+      log.classList.remove('hidden');
+      startBtn.classList.add('hidden');
+      bgMusic.volume = 0.05;
+      bgMusic.play();
+      sunnySound.volume = 0.1;
+      sunnySound.play();
+      showLevel();
     });
 
-    // === Show a level question and options ===
-    function showLevel(levelIndex) {
-      log.innerHTML = '';
-      victory.classList.add('hidden');
+    // Accessibility: focus log area after each level
+    const observer = new MutationObserver(() => {
+      log.focus();
+    });
+    observer.observe(log, { childList: true });
 
-      const level = levels[levelIndex];
-
-      // Container flex for question + sun (centered)
-      const questionContainer = document.createElement('div');
-      questionContainer.style.display = 'flex';
-      questionContainer.style.justifyContent = 'center';
-      questionContainer.style.alignItems = 'center';
-      questionContainer.style.marginBottom = '25px';
-
-      // Question text element
-      const questionEl = document.createElement('h2');
-      questionEl.textContent = level.question;
-      questionEl.style.margin = '0';
-      questionEl.style.fontWeight = '700';
-
-      // Sun element
-      const sun = createSunElement();
-
-      // Append question and sun to container
-      questionContainer.appendChild(questionEl);
-      questionContainer.appendChild(sun);
-
-      // Append container to log
-      log.appendChild(questionContainer);
-
-      // Options container
-      const optionsDiv = document.createElement('div');
-      optionsDiv.id = 'options';
-
-      // Add option buttons
-      level.options.forEach((option, idx) => {
-        const btn = document.createElement('button');
-        btn.textContent = option.text;
-        btn.setAttribute('aria-label', option.text);
-
-        btn.addEventListener('click', () => {
-          if (option.fail) {
-            thunderSound.currentTime = 0;
-            thunderSound.play();
-            alert(`Oops! ${level.feedback}`);
-            // Shake or highlight?
-            btn.style.backgroundColor = '#ff6666';
-            setTimeout(() => {
-              btn.style.backgroundColor = '';
-            }, 600);
-          } else {
-            correctSound.currentTime = 0;
-            correctSound.play();
-            score++;
-            currentLevel++;
-            if (currentLevel >= levels.length) {
-              showVictory();
-            } else {
-              showLevel(currentLevel);
-            }
-          }
-        });
-
-        optionsDiv.appendChild(btn);
-      });
-
-      log.appendChild(optionsDiv);
-    }
-
-    // === Show victory message ===
-    function showVictory() {
-      log.innerHTML = '';
-      victory.classList.remove('hidden');
-      victory.textContent = `🎉 Congratulations! You completed the Cloud Quest with a score of ${score} out of ${levels.length}! 🎉`;
-
-      // Confetti effect
-      confetti({
-        particleCount: 150,
-        spread: 70,
-        origin: { y: 0.6 }
-      });
-
-      bgMusic.pause();
-    }
   </script>
 
 </body>
