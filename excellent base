@@ -312,38 +312,20 @@
       }
     }
 
- /* === Sun rays === */
+/* === Sun (Simplified) === */
 #sunrays {
   position: fixed;
-  top: 20px;
-  right: 20px; /* Move sun rays to the right side */
-  width: 250px;
-  height: 250px;
-  pointer-events: none;
+  top: 70px; /* Adjusted to move the sun down a bit */
+  right: 20px;
+  width: 100px;
+  height: 100px;
+  background: #ffcc00;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(255, 204, 0, 0.7);
   z-index: 9999;
-  user-select: none;
-  filter: drop-shadow(0 0 12px #ffd54f);
-  animation: sunRotate 15s linear infinite; /* Faster rotation for more cheerful look */
+  pointer-events: none;
 }
 
-
-    #sunrays .ray {
-      position: absolute;
-      width: 8px;
-      height: 40px;
-      background: #ffd54f;
-      border-radius: 3px;
-      top: 50%;
-      left: 50%;
-      transform-origin: bottom center;
-      opacity: 0.8;
-      filter: drop-shadow(0 0 6px #ffecb3);
-    }
-
-    @keyframes sunRotate {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
 
     /* === Butterflies container === */
     #butterflies {
