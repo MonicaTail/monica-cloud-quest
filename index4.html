@@ -354,93 +354,37 @@
             display: none;
         }
         /* Chatbot Styles */
-        #monikat-chat-container {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 300px;
-            height: 400px;
-            background-color: #f0f0f0;
+        .monikat-chat-container {
             border: 1px solid #ccc;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            display: flex; /* Changed to flex to be always visible */
-            flex-direction: column;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            z-index: 999;
-            border-radius: 8px;
-            overflow: hidden;
+            padding: 15px;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+            margin-top: 20px;
+            text-align: left;
         }
-
-        #monikat-chat-header {
-            background: linear-gradient(145deg, #a7d7f9, #89c2f7);
-            color: #003366;
-            padding: 10px;
-            font-size: 1.1em;
-            font-weight: bold;
-            text-align: center;
-            border-top-left-radius: 8px;
-            border-top-right-radius: 8px;
-            cursor: default;
-            user-select: none;
-        }
-
-        #monikat-chat-log {
-            flex-grow: 1;
-            padding: 10px;
-            overflow-y: auto;
-            background-color: white;
-            word-wrap: break-word;
-            border-bottom: 1px solid #eee;
-        }
-
-        #monikat-chat-log p {
-            margin: 5px 0;
-            line-height: 1.4;
-        }
-
-        /* Styles for Monikat's message */
-        #monikat-chat-log p strong {
-            color: #0056b3;
-        }
-        /* Styles for user's message */
-        #monikat-chat-log p.user-message {
-            text-align: right;
-            color: #1b5e20;
-        }
-
-
-        #monikat-chat-input-area {
-            display: flex;
-            padding: 10px;
-            background-color: #f0f0f0;
-        }
-
-        #chat-input {
-            flex-grow: 1;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            margin-right: 5px;
-            font-size: 0.9em;
-            background-color: white;
-            color: #333;
-        }
-
-        #send-button {
+        .monikat-chat-message {
+            background-color: #e0f2f7;
             padding: 8px 12px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.9em;
-            transition: background-color 0.2s ease;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            max-width: 80%;
         }
-
-        #send-button:hover {
-            background-color: #0056b3;
+        .user-chat-message {
+            background-color: #c8e6c9;
+            text-align: right;
+            margin-left: auto;
         }
-
+        .chat-input-area {
+            display: flex;
+            margin-top: 15px;
+        }
+        .chat-input-area input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
         .java-code-display {
             background-color: #333;
             color: #eee;
@@ -451,56 +395,6 @@
             white-space: pre-wrap;
             text-align: left;
             overflow-x: auto;
-        }
-
-        /* Certificate Styles */
-        #certificate {
-            background: linear-gradient(135deg, #f0f9ff, #cde7ff);
-            border: 10px solid #0077cc;
-            padding: 40px;
-            margin-top: 50px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            max-width: 700px;
-            margin-left: auto;
-            margin-right: auto;
-            text-align: center;
-            font-family: 'Georgia', serif;
-            color: #003366;
-            display: none; /* Hidden by default */
-            z-index: 100;
-            position: relative;
-        }
-        #certificate h2 {
-            font-size: 2.5em;
-            color: #0056b3;
-            margin-bottom: 20px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-        }
-        #certificate p {
-            font-size: 1.2em;
-            margin-bottom: 15px;
-        }
-        #certificate .name {
-            font-size: 1.8em;
-            font-weight: bold;
-            margin: 20px 0;
-            color: #d9534f; /* A nice contrasting color */
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
-        }
-        #certificate .score {
-            font-size: 1.5em;
-            margin-top: 25px;
-            color: #28a745;
-            font-weight: bold;
-        }
-        #certificate img {
-            width: 150px;
-            height: auto;
-            margin-top: 30px;
-            border-radius: 50%;
-            border: 4px solid #fff;
-            box-shadow: 0 0 15px rgba(0,0,0,0.2);
         }
     </style>
 </head>
@@ -551,17 +445,6 @@
 
     <div class="victory hidden" id="victory" role="alert" aria-live="assertive"></div>
 
-    <div id="certificate" class="hidden">
-        <h2>Certificate of Completion</h2>
-        <p>This certifies that</p>
-        <p class="name">A Cloud Quest Enthusiast</p>
-        <p>has successfully completed</p>
-        <p><strong>Monica's Cloud Quest</strong></p>
-        <p class="score">With a score of <span id="final-score">0</span> out of <span id="total-questions">0</span> questions correct!</p>
-        <img src="https://img.icons8.com/plasticine/100/medal2.png" alt="Award Medal">
-        <p style="margin-top: 30px; font-size: 0.9em; font-style: italic;">Congratulations on your cloud learning journey!</p>
-    </div>
-
     <button id="start-btn" class="cloud-button" aria-label="Start the game">☁️ Start</button>
 
     <div id="control-buttons" style="margin-top: 25px; display:none;">
@@ -569,16 +452,6 @@
         <button id="refresh-btn" class="refresh-btn" aria-label="Restart the game">Restart</button>
     </div>
 
-    <div id="monikat-chat-container">
-        <div id="monikat-chat-header">Monikat Chat</div>
-        <div id="monikat-chat-log">
-            <p><strong>Monikat:</strong> Welcome to Monica's Cloud Quest! Ask me anything about Oracle Cloud, Java, or the game! Try typing 'hello'.</p>
-        </div>
-        <div id="monikat-chat-input-area">
-            <input type="text" id="chat-input" placeholder="Type your message...">
-            <button id="send-button">Send</button>
-        </div>
-    </div>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <script>
         // Variables & Elements
@@ -600,18 +473,6 @@
         const butterfliesContainer = document.getElementById('butterflies');
 
         const sun = document.getElementById('sunrays');
-
-        // New elements for the Monikat Chatbot
-        const monikatChatContainer = document.getElementById('monikat-chat-container');
-        const monikatChatLog = document.getElementById('monikat-chat-log');
-        const chatInput = document.getElementById('chat-input');
-        const sendButton = document.getElementById('send-button');
-
-        // Certificate elements
-        const certificateDiv = document.getElementById('certificate');
-        const finalScoreSpan = document.getElementById('final-score');
-        const totalQuestionsSpan = document.getElementById('total-questions');
-
 
         let currentLevel = 0;
         let score = 0;
@@ -736,15 +597,14 @@ public class Calculator {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         System.out.println("Enter first number:");
-        // In a real demo, you'd process input, but here we just check code.
-        // int a = sc.nextInt();
+        int a = sc.nextInt();
         System.out.println("Enter second number:");
-        // int b = sc.nextInt();
-        System.out.println("Sum: "); // Simulating output after sum
+        int b = sc.nextInt();
+        System.out.println("Sum: " + (a + b));
         sc.close();
     }
 }`,
-                demoSuccessMsg: "Great! You've created a simple Java calculator! (Input processing is simulated for this demo)"
+                demoSuccessMsg: "Great! You've created a simple Java calculator!"
             },
             {
                 question: "Chat with Monikat: Ask her about Oracle Cloud, Java, or anything else about Monica's Quest!",
@@ -827,11 +687,10 @@ public class Calculator {
 
         // Show level function
         function showLevel() {
-            stopRain(); // Ensure no rain when a new level starts
+            stopRain();
             document.getElementById('control-buttons').style.display = currentLevel === 0 ? 'none' : 'block';
             log.innerHTML = ''; // Clear previous content
             victory.classList.add('hidden');
-            certificateDiv.classList.add('hidden'); // Hide certificate if visible
 
             if (currentLevel >= levels.length) {
                 endGame();
@@ -871,221 +730,253 @@ public class Calculator {
 
                 const input = document.createElement('textarea');
                 input.style.fontSize = '1.1em';
-                input.style.width = 'calc(100% - 20px)';
-                input.style.minHeight = '100px';
-                input.style.marginTop = '15px';
+                input.style.width = '85%';
+                input.style.height = '150px'; /* Give it some height for multi-line code */
                 input.style.padding = '10px';
-                input.style.borderRadius = '8px';
-                input.style.border = '1px solid #ccc';
-                input.placeholder = "Enter your code here...";
+                input.setAttribute('aria-label', 'Java demo input');
+                input.placeholder = 'Type your code here...';
                 log.appendChild(input);
 
-                const submitBtn = document.createElement('button');
-                submitBtn.textContent = 'Run Code';
-                submitBtn.style.marginTop = '15px';
-                submitBtn.onclick = () => {
-                    // Normalize inputs for comparison (remove extra spaces/newlines)
-                    const normalizedInput = input.value.trim().replace(/\s+/g, ' ');
-                    const normalizedCorrectInput = level.correctDemoInput.trim().replace(/\s+/g, ' ');
-
-                    if (normalizedInput === normalizedCorrectInput) {
-                        logMessage('You: ' + input.value, 'user-message');
-                        logMessage('Monikat: ' + level.demoSuccessMsg);
+                const runBtn = document.createElement('button');
+                runBtn.textContent = 'Run Code';
+                runBtn.style.marginTop = '12px';
+                runBtn.addEventListener('click', () => {
+                    const userInput = input.value.trim();
+                    if (level.correctDemoInput.trim() === userInput) {
                         awesomeChoice.play();
+                        alert(level.demoSuccessMsg);
                         score++;
-                        stopRain(); // No rain if correct
-                        setTimeout(nextLevel, 2000);
+                        currentLevel++;
+                        showLevel();
                     } else {
-                        logMessage('You: ' + input.value, 'user-message');
-                        logMessage('Monikat: Hmm, that code isn\'t quite right. Try again!');
                         thunderSound.play();
-                        startRain(); // Rain on incorrect demo input
-                        // No score change, stay on level
+                        startRain();
+                        alert("Oops, that's not quite right. Check capitalization and punctuation!");
+                        setTimeout(stopRain, 3000); // Stop rain after 3 seconds
                     }
-                };
-                log.appendChild(submitBtn);
+                });
+                log.appendChild(runBtn);
 
-                // Disable traditional options for demo levels
-                if (document.getElementById('options')) {
-                    document.getElementById('options').innerHTML = '';
-                }
-            } else if (level.chat) {
-                // Handle Chatbot Levels - Chatbot is always visible now, just manage the level flow
-                logMessage('Monikat: Hello! Ask me anything about Monica\'s quest, Oracle Cloud, or Java! I\'ll be here for a bit.', 'monikat');
-                logMessage('You can ask things like: "What is Oracle Cloud?" or "Tell me about Java."', 'monikat');
+                input.addEventListener('keydown', e => {
+                    if (e.key === 'Enter' && !e.shiftKey) { // Allow Shift+Enter for new line
+                        e.preventDefault();
+                        runBtn.click();
+                    }
+                });
+            }
+            // Handle Monikat Chat Level
+            else if (level.chat) {
+                const chatContainer = document.createElement('div');
+                chatContainer.className = 'monikat-chat-container';
+                chatContainer.id = 'monikat-chat-area';
+                log.appendChild(chatContainer);
+
+                // Initial Monikat message
+                addMessageToChat(chatContainer, 'Monikat', "Hello! How can I help you today regarding Monica's Cloud Quest?", '#0056b3');
+
+                const chatInputArea = document.createElement('div');
+                chatInputArea.className = 'chat-input-area';
+                log.appendChild(chatInputArea);
+
+                const chatInput = document.createElement('input');
+                chatInput.type = 'text';
+                chatInput.placeholder = 'Type your message...';
+                chatInput.setAttribute('aria-label', 'Chat with Monikat input');
+                chatInputArea.appendChild(chatInput);
+
+                const sendChatBtn = document.createElement('button');
+                sendChatBtn.textContent = 'Send';
+                chatInputArea.appendChild(sendChatBtn);
+
+                sendChatBtn.onclick = () => handleChatInput(chatInput, chatContainer);
+                chatInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleChatInput(chatInput, chatContainer);
+                    }
+                });
 
                 // Auto-advance after chatDuration
                 setTimeout(() => {
-                    if (currentLevel === levels.indexOf(level)) { // Check if still on this level
-                        logMessage('Monikat: Time\'s up for chat! Let\'s move on to the next challenge!', 'monikat');
-                        setTimeout(nextLevel, 2000);
-                    }
+                    alert("Time's up for chatting! Moving to the next challenge.");
+                    currentLevel++;
+                    showLevel();
                 }, level.chatDuration);
 
-                // Disable traditional options for chat levels
-                if (document.getElementById('options')) {
-                    document.getElementById('options').innerHTML = '';
-                }
-            } else {
-                // Handle Standard Multiple Choice Levels
+            }
+            // Handle standard multiple choice questions
+            else {
                 const optionsDiv = document.createElement('div');
                 optionsDiv.id = 'options';
                 level.answers.forEach(answer => {
-                    const button = document.createElement('button');
-                    button.textContent = answer.text;
-                    button.onclick = () => checkAnswer(answer, level);
-                    optionsDiv.appendChild(button);
+                    const btn = document.createElement('button');
+                    btn.textContent = answer.text;
+                    btn.setAttribute('aria-label', `Answer option: ${answer.text}`);
+                    btn.addEventListener('click', () => {
+                        if (answer.correct) {
+                            correctSound.play();
+                            score++;
+                            stopRain();
+                            resetSun();
+                            setTimeout(() => {
+                                currentLevel++;
+                                showLevel();
+                            }, 1100);
+                        } else {
+                            thunderSound.play();
+                            startRain();
+                            sunFall(); // Animate sun on wrong answer
+                            btn.style.background = '#cc3300';
+                            btn.disabled = true;
+                            setTimeout(stopRain, 3000); // Stop rain after 3 seconds
+                        }
+                    });
+                    optionsDiv.appendChild(btn);
                 });
                 log.appendChild(optionsDiv);
             }
         }
 
-        // Check Answer Function
-        function checkAnswer(selectedAnswer, level) {
-            // Disable all buttons to prevent multiple clicks
-            const buttons = document.querySelectorAll('#options button');
-            buttons.forEach(button => button.disabled = true);
+        function addMessageToChat(chatArea, sender, message, color = '#333') {
+            const msgElement = document.createElement('div');
+            msgElement.className = 'monikat-chat-message';
+            if (sender === 'You') {
+                msgElement.classList.add('user-chat-message');
+            }
+            msgElement.innerHTML = `<strong>${sender}:</strong> <span style="color: ${color};">${message}</span>`;
+            chatArea.appendChild(msgElement);
+            chatArea.scrollTop = chatArea.scrollHeight; // Auto-scroll to latest message
+            chatHistory.push({ sender, message }); // Store for future reference if needed
+        }
 
-            if (selectedAnswer.correct) {
-                logMessage('Monikat: Excellent choice! That\'s correct!', 'monikat');
-                correctSound.play();
-                score++;
-                stopRain(); // Stop rain on correct answer
-                setTimeout(nextLevel, 1500);
+        function handleChatInput(inputElement, chatAreaElement) {
+            const userMessage = inputElement.value.trim();
+            if (userMessage === '') return;
+
+            addMessageToChat(chatAreaElement, 'You', userMessage);
+            inputElement.value = '';
+
+            let monikatResponse = "That's an interesting thought! Tell me more.";
+
+            if (userMessage.toLowerCase().includes('oracle cloud')) {
+                monikatResponse = "Oracle Cloud Infrastructure (OCI) is Oracle's suite of cloud computing services that runs on the Oracle Cloud Infrastructure platform. It offers a wide range of services, including compute, storage, networking, databases, analytics, and more.";
+            } else if (userMessage.toLowerCase().includes('java')) {
+                monikatResponse = "Java is a popular, high-level, object-oriented programming language known for its 'write once, run anywhere' capability. It's widely used for enterprise-level applications, Android development, web applications, and big data.";
+            } else if (userMessage.toLowerCase().includes('putty')) {
+                monikatResponse = "PuTTY is a free and open-source terminal emulator, serial console and network file transfer application. It supports several network protocols, including SCP, SSH, Telnet, rlogin, and raw socket connection. It's commonly used for secure remote access to Linux/Unix servers.";
+            } else if (userMessage.toLowerCase().includes('tigervnc')) {
+                monikatResponse = "TigerVNC is a high-performance, platform-independent implementation of VNC (Virtual Network Computing). It allows you to control a graphical desktop remotely. It's great for accessing your VM's graphical interface!";
+            } else if (userMessage.toLowerCase().includes('monica')) {
+                monikatResponse = "Monica is on an amazing journey learning about cloud computing! She's exploring new technologies and solving challenges. What do you find most interesting about her quest?";
+            } else if (userMessage.toLowerCase().includes('quest')) {
+                monikatResponse = "This quest is designed to teach you fundamental concepts about cloud computing, specifically with Oracle Cloud, and some key tools and programming languages like Java.";
             } else {
-                logMessage('Monikat: Oops! Not quite right. Keep learning!', 'monikat');
-                thunderSound.play();
-                startRain(); // Start rain on incorrect answer
-                // No score increment for wrong answers
-                setTimeout(nextLevel, 1500); // Advance even on wrong answer, but with rain
+                monikatResponse = "Hmm, I'm not familiar with that topic yet, but I'm always learning! Let's keep exploring Oracle Cloud together!";
             }
+
+            setTimeout(() => {
+                addMessageToChat(chatAreaElement, 'Monikat', monikatResponse, '#0056b3');
+            }, 1500); // Monikat responds after 1.5 seconds
         }
 
-        // Log messages to the main game log
-        function logMessage(message, className = '') {
-            const p = document.createElement('p');
-            p.textContent = message;
-            if (className) {
-                p.classList.add(className);
-            }
-            log.appendChild(p);
-            log.scrollTop = log.scrollHeight; // Auto-scroll to bottom
+        // End game function
+        function endGame() {
+            log.classList.add('hidden');
+            victory.classList.remove('hidden');
+            victory.innerHTML = `
+                🎉 Congratulations! You completed Monica's Cloud Quest with a score of ${score} out of ${levels.length}! ☁️🌈
+                <br><br>
+                <strong>Message to Ben:</strong> Thanks for inspiring me to create this learning journey! 🚀
+                <br><br>
+                <button id="certificateBtn">Download Learning Certificate</button>
+            `;
+            document.getElementById('certificateBtn').addEventListener('click', generateCertificate);
+            bgMusic.pause();
+            rainSound.pause();
+            sunnySound.pause();
+
+            // Confetti animation
+            const duration = 6000;
+            const endTime = Date.now() + duration;
+            (function frame() {
+                confetti({ particleCount: 6, angle: 60, spread: 70, origin: { x: 0 } });
+                confetti({ particleCount: 6, angle: 120, spread: 70, origin: { x: 1 } });
+                if (Date.now() < endTime) {
+                    requestAnimationFrame(frame);
+                }
+            })();
+
+            // Show control buttons
+            document.getElementById('control-buttons').style.display = 'block';
+            document.getElementById('back-btn').style.display = 'none';
         }
 
-        // Chatbot specific logging
-        function logMonikatChatMessage(message, sender = 'Monikat') {
-            const p = document.createElement('p');
-            p.innerHTML = `<strong>${sender}:</strong> ${message}`;
-            if (sender !== 'Monikat') {
-                p.classList.add('user-message');
-            }
-            monikatChatLog.appendChild(p);
-            monikatChatLog.scrollTop = monikatChatLog.scrollHeight;
+        // Generate certificate
+        function generateCertificate() {
+            const certText = `
+Monica's Cloud Quest Learning Certificate
+
+Congratulations!
+
+You have demonstrated learning outcomes in:
+- Oracle Cloud basics
+- Remote desktop tools (TigerVNC, Putty)
+- SSH key management
+- Java programming (Hello World, Calculator)
+- Understanding Putty extensions
+- Fun facts about remote tools
+- Interacting with Monikat!
+
+Keep up your learning! 🚀
+            `;
+            const blob = new Blob([certText], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'Learning_Certificate.txt';
+            a.click();
+            URL.revokeObjectURL(url);
         }
 
-        // Monikat Chatbot AI logic (simplified)
-        function getMonikatResponse(userMessage) {
-            const msg = userMessage.toLowerCase();
-            let response = "I'm still learning, but I understand a bit about Monica's quest and Oracle Cloud. Can you try asking me something specific?";
-
-            if (msg.includes("hello") || msg.includes("hi")) {
-                response = "Hi there! What would you like to know?";
-            } else if (msg.includes("oracle cloud") || msg.includes("what is oci")) {
-                response = "Oracle Cloud Infrastructure (OCI) is a suite of cloud computing services that runs on the Oracle Cloud Infrastructure platform. Monica used it to create her virtual machines!";
-            } else if (msg.includes("java")) {
-                response = "Java is a popular programming language, especially for enterprise applications. Monica is learning to code in Java on her cloud VMs!";
-            } else if (msg.includes("monica's quest") || msg.includes("quest")) {
-                response = "Monica's quest is all about learning cloud technologies, especially Oracle Cloud, and overcoming challenges like setting up VMs and coding!";
-            } else if (msg.includes("putty")) {
-                response = "Putty is a free and open-source terminal emulator, serial console and network file transfer application. It supports several network protocols, including SCP, SSH, Telnet, rlogin, and raw socket connection. It is commonly used for remote access to servers.";
-            } else if (msg.includes("tigervnc")) {
-                response = "TigerVNC is a high-performance, platform-neutral implementation of VNC (Virtual Network Computing). It allows you to control a graphical desktop remotely. Monica used it for her VMs!";
-            } else if (msg.includes("thank you") || msg.includes("thanks")) {
-                response = "You're welcome! Glad I could help.";
-            } else if (msg.includes("score")) {
-                response = `You currently have ${score} correct answers! Keep going!`;
-            }
-
-            // Store conversation history
-            chatHistory.push({ sender: 'You', message: userMessage });
-            chatHistory.push({ sender: 'Monikat', message: response });
-
-            logMonikatChatMessage(response, 'Monikat');
-        }
-
-        sendButton.addEventListener('click', () => {
-            const userMessage = chatInput.value.trim();
-            if (userMessage) {
-                logMonikatChatMessage(userMessage, 'You');
-                chatInput.value = '';
-                getMonikatResponse(userMessage);
-            }
-        });
-
-        chatInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                sendButton.click();
-            }
-        });
-
-        // Navigation Functions
-        function nextLevel() {
-            currentLevel++;
+        // Event Listeners
+        startBtn.addEventListener('click', () => {
+            startBtn.classList.add('hidden');
+            log.classList.remove('hidden');
+            victory.classList.add('hidden');
+            score = 0;
+            currentLevel = 0;
+            bgMusic.volume = 0.05;
+            bgMusic.play();
+            sunnySound.volume = 0.1;
+            sunnySound.play();
             showLevel();
-        }
-
-        function prevLevel() {
+        });
+        backBtn.addEventListener('click', () => {
             if (currentLevel > 0) {
                 currentLevel--;
                 showLevel();
             }
-        }
+        });
+        refreshBtn.addEventListener('click', () => {
+            if (confirm("Are you sure you want to restart the quest?")) {
+                score = 0;
+                currentLevel = 0;
+                victory.classList.add('hidden');
+                log.classList.remove('hidden');
+                startBtn.classList.add('hidden');
+                bgMusic.volume = 0.05;
+                bgMusic.play();
+                sunnySound.volume = 0.1;
+                sunnySound.play();
+                showLevel();
+            }
+        });
+        // Focus log when content changes
+        const observer = new MutationObserver(() => {
+            log.focus();
+        });
+        observer.observe(log, { childList: true });
 
-        function endGame() {
-            log.innerHTML = ''; // Clear game log
-            victory.classList.remove('hidden');
-            victory.innerHTML = `🌟 Congratulations! You've completed Monica's Cloud Quest! 🌟<br><br>
-                                 You answered ${score} out of ${levels.length} questions correctly.`;
-
-            // Show certificate
-            certificateDiv.classList.remove('hidden');
-            finalScoreSpan.textContent = score;
-            totalQuestionsSpan.textContent = levels.length;
-
-            startBtn.textContent = 'Play Again?';
-            startBtn.classList.remove('hidden');
-            controlButtons.style.display = 'none';
-            stopRain();
-            confetti({
-                particleCount: 100,
-                spread: 70,
-                origin: { y: 0.6 }
-            });
-            sunBlowUp(); // Sun explodes on victory
-            setTimeout(resetSun, 2000); // Reset sun after explosion
-        }
-
-        function startGame() {
-            currentLevel = 0;
-            score = 0;
-            startBtn.classList.add('hidden');
-            victory.classList.add('hidden');
-            certificateDiv.classList.add('hidden'); // Hide certificate at start of new game
-            controlButtons.style.display = 'block';
-            resetSun(); // Reset sun for a new game
-            showLevel();
-            bgMusic.volume = 0.05; // Set background music volume
-            bgMusic.play();
-            sunnySound.volume = 0.15; // Set sunny sound volume
-            sunnySound.play();
-            // Ensure chat log is reset and initial Monikat message is shown
-            monikatChatLog.innerHTML = '<p><strong>Monikat:</strong> Welcome to Monica\'s Cloud Quest! Ask me anything about Oracle Cloud, Java, or the game! Try typing \'hello\'.</p>';
-        }
-
-        // Event Listeners
-        startBtn.addEventListener('click', startGame);
-        backBtn.addEventListener('click', prevLevel);
-        refreshBtn.addEventListener('click', startGame); // Restart button functionality
     </script>
 </body>
 </html>

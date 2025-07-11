@@ -1,1067 +1,385 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>☁️ Monica's Cloud Quest ☁️</title>
-  <link rel="icon" href="favicon.ico" type="image/x-icon" />
-  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
-  <style>
-    /* === Page Styles === */
-    body {
-      background: linear-gradient(to bottom, #fff9db, #f7e7a7);
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      text-align: center;
-      padding: 50px;
-      overflow-x: hidden;
-      color: #003366;
-      user-select: none;
-      position: relative;
-      min-height: 100vh;
-      transition: background 1s ease;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monica's Cloud Quest</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        /* Basic styling for the game */
+        body {
+            margin: 0;
+            overflow: hidden; /* Hide scrollbars if particles go off-screen */
+            font-family: 'Press Start 2P', cursive;
+            background-color: #87CEEB; /* Light blue sky background */
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            position: relative;
+        }
 
-    body.rainy {
-      background: linear-gradient(to bottom, #546a7b, #a0b8ca);
-      filter: brightness(0.85);
-    }
+        #weather-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none; /* Allows clicks to pass through to elements below */
+        }
 
-    body.sunny {
-      background: linear-gradient(to bottom, #fff9db, #f7e7a7);
-      filter: brightness(1.1);
-    }
+        /* Raindrop styles */
+        .raindrop {
+            position: absolute;
+            background-color: rgba(173, 216, 230, 0.7); /* Light blue, semi-transparent */
+            border-radius: 50%;
+            opacity: 0;
+            animation: fallRain linear infinite;
+        }
 
-    h1 {
-      font-size: 3em;
-      margin-bottom: 20px;
-      animation: popIn 2s ease;
-      text-shadow: 0 0 15px #4fa1d8;
-    }
+        /* Sun particle styles */
+        .sun-particle {
+            position: absolute;
+            background-color: rgba(255, 223, 0, 0.8); /* Golden yellow, semi-transparent */
+            border-radius: 50%;
+            opacity: 0;
+            animation: fallSun linear infinite;
+        }
 
-    @keyframes popIn {
-      0% { transform: scale(0.5); opacity: 0; }
-      100% { transform: scale(1); opacity: 1; }
-    }
+        /* Keyframes for rain animation */
+        @keyframes fallRain {
+            0% { transform: translateY(-10px) translateX(calc(var(--rand-x) * 1px)); opacity: 0; }
+            5% { opacity: 1; }
+            95% { opacity: 1; }
+            100% { transform: translateY(100vh) translateX(calc(var(--rand-x) * 1px)); opacity: 0; }
+        }
 
-    /* === Buttons === */
-    button {
-      padding: 14px 28px;
-      margin: 12px;
-      font-size: 16px;
-      background: linear-gradient(145deg, #a7d7f9, #89c2f7);
-      color: #003366;
-      border: 2px solid #4fa1d8;
-      border-radius: 18px;
-      cursor: pointer;
-      transition: all 0.3s ease-in-out;
-      box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
-      font-weight: 600;
-      letter-spacing: 0.8px;
-      text-transform: uppercase;
-      user-select: none;
-      position: relative;
-      overflow: hidden;
-    }
+        /* Keyframes for sun animation */
+        @keyframes fallSun {
+            0% { transform: translateY(-10px) translateX(calc(var(--rand-x) * 1px)); opacity: 0; }
+            5% { opacity: 1; }
+            95% { opacity: 1; }
+            100% { transform: translateY(100vh) translateX(calc(var(--rand-x) * 1px)); opacity: 0; }
+        }
 
-    button:hover:not(:disabled) {
-      background: linear-gradient(145deg, #89c2f7, #a7d7f9);
-      transform: scale(1.1) rotate(-1deg);
-      box-shadow: 0 10px 25px rgba(0, 119, 204, 0.6);
-    }
+        /* Game UI elements */
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            z-index: 10; /* Ensure UI is above weather effects */
+            max-width: 90%;
+            margin: 20px;
+        }
 
-    button:disabled {
-      background-color: #ccc;
-      cursor: not-allowed;
-      box-shadow: none;
-      color: #666;
-    }
+        #log, #victory {
+            width: 100%;
+            height: 200px;
+            background-color: #e0f7fa;
+            border: 2px solid #00bcd4;
+            padding: 10px;
+            margin-bottom: 20px;
+            overflow-y: auto;
+            text-align: left;
+            box-sizing: border-box;
+            white-space: pre-wrap; /* Preserve formatting for log messages */
+        }
 
-    /* Back button styling (different color) */
-    .back-btn {
-      background: #bbb !important;
-      color: #222 !important;
-    }
+        .hidden {
+            display: none;
+        }
 
-    /* Refresh button styling */
-    .refresh-btn {
-      background: #ffd54f !important;
-      color: #333 !important;
-      border-color: #ffca28 !important;
-    }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Press Start 2P', cursive;
+            transition: background-color 0.3s ease;
+        }
 
-    /* === Hidden === */
-    .hidden {
-      display: none;
-    }
+        button:hover {
+            background-color: #0056b3;
+        }
 
-    /* === Log Area === */
-    #log {
-      text-align: left;
-      margin-top: 30px;
-      background: transparent;
-      padding: 25px 30px;
-      border-radius: 15px;
-      max-width: 840px;
-      margin-left: auto;
-      margin-right: auto;
-      box-shadow: none;
-      min-height: 220px;
-      font-size: 1.1em;
-      color: #003366;
-      user-select: text;
-      position: relative;
-      z-index: 10;
-    }
+        #control-buttons button {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+        }
 
-    /* === Victory Message === */
-    .victory {
-      color: #1b5e20;
-      font-weight: bold;
-      margin-top: 40px;
-      font-size: 1.8em;
-      text-shadow: 0 0 15px #00cc00;
-      animation: glow 1.5s ease-in-out infinite alternate;
-      max-width: 840px;
-      margin-left: auto;
-      margin-right: auto;
-      background: #e6ffe6cc;
-      padding: 30px;
-      border-radius: 18px;
-      box-shadow: 0 0 30px #00cc00aa;
-      position: relative;
-      overflow: hidden;
-      z-index: 10;
-    }
-
-    @keyframes glow {
-      from {
-        text-shadow: 0 0 15px #00cc00, 0 0 25px #00cc00;
-      }
-      to {
-        text-shadow: 0 0 25px #00ff00, 0 0 35px #00ff00;
-      }
-    }
-
-    /* === Avatar Selection === */
-    .avatar-selection {
-      display: flex;
-      justify-content: center;
-      gap: 40px;
-      flex-wrap: wrap;
-      margin: 35px auto 15px auto;
-      position: relative;
-      z-index: 10;
-    }
-
-    .avatar {
-      cursor: pointer;
-      border: 5px solid transparent;
-      border-radius: 50%;
-      width: 140px;
-      height: 140px;
-      transition: all 0.35s ease-in-out;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
-      filter: drop-shadow(0 0 3px #77bfff);
-      user-select: none;
-      position: relative;
-      background: #d0e8ff;
-    }
-
-    .avatar:hover, .avatar.selected {
-      transform: scale(1.15) rotate(-5deg);
-      border-color: #0077cc;
-      box-shadow: 0 0 28px rgba(0, 119, 204, 0.85);
-      filter: drop-shadow(0 0 12px #3399ff);
-      background: linear-gradient(145deg, #89c2f7, #a7d7f9);
-    }
-
-    /* === Character Message === */
-    #character-message {
-      font-style: italic;
-      color: #004d80;
-      margin-top: 15px;
-      font-size: 1.15em;
-      min-height: 40px;
-      max-width: 720px;
-      margin-left: auto;
-      margin-right: auto;
-      user-select: none;
-      transition: all 0.3s ease-in-out;
-      position: relative;
-      z-index: 10;
-    }
-
-    /* === Option Buttons === */
-    #options button {
-      display: block;
-      width: 100%;
-      max-width: 400px;
-      margin: 12px auto;
-      font-size: 1.1em;
-      border-radius: 22px;
-      background: linear-gradient(135deg, #9cd3f5, #5fa9f5);
-      color: #002244;
-      font-weight: 700;
-      letter-spacing: 0.9px;
-      box-shadow: 0 6px 18px rgba(45, 118, 205, 0.7);
-      transition: transform 0.25s ease, box-shadow 0.25s ease;
-      user-select: none;
-      position: relative;
-      overflow: hidden;
-    }
-
-    #options button:hover:not(:disabled) {
-      transform: scale(1.15) rotate(1deg);
-      box-shadow: 0 10px 28px rgba(0, 120, 255, 0.9);
-      background: linear-gradient(135deg, #5fa9f5, #9cd3f5);
-      color: #001a3c;
-    }
-
-    /* === Interactive Cloud Button (replaces blue dot) === */
-    .cloud-button {
-      font-size: 4rem;
-      cursor: pointer;
-      background: transparent;
-      border: none;
-      transition: transform 0.3s ease, filter 0.3s ease;
-      user-select: none;
-      color: #3399ff;
-      filter: drop-shadow(0 0 8px #66b3ff);
-      margin: 10px auto 30px auto;
-      display: inline-block;
-      position: relative;
-      z-index: 10;
-    }
-
-    .cloud-button:hover {
-      transform: scale(1.3) rotate(-10deg);
-      color: #66ccff;
-      filter: drop-shadow(0 0 20px #99ddff);
-    }
-
-    /* === Floating Clouds with words at top === */
-    .floating-clouds {
-      position: fixed;
-      top: 10px;
-      left: 0;
-      width: 100%;
-      height: 50px;
-      pointer-events: none;
-      overflow: visible;
-      z-index: 5;
-    }
-
-    .floating-clouds .cloud {
-      position: absolute;
-      background: #ffffffcc;
-      border-radius: 50% / 60%;
-      padding: 10px 25px;
-      font-weight: bold;
-      color: #336699;
-      box-shadow: 0 0 15px #ccc;
-      animation: floatClouds 6s ease-in-out infinite alternate;
-      font-size: 1.2rem;
-      user-select: none;
-      filter: drop-shadow(0 0 6px #a0c8ff);
-      cursor: default;
-      white-space: nowrap;
-    }
-
-    .floating-clouds .cloud:nth-child(odd) {
-      animation-duration: 8s;
-    }
-
-    .floating-clouds .cloud:nth-child(1) { top: 5px; left: 6%; }
-    .floating-clouds .cloud:nth-child(2) { top: 12px; left: 23%; }
-    .floating-clouds .cloud:nth-child(3) { top: 8px; left: 38%; }
-    .floating-clouds .cloud:nth-child(4) { top: 5px; left: 52%; }
-    .floating-clouds .cloud:nth-child(5) { top: 12px; left: 68%; }
-    .floating-clouds .cloud:nth-child(6) { top: 8px; left: 83%; }
-
-    @keyframes floatClouds {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(50px); }
-    }
-
-    /* === Raindrops container */
-    #rain {
-      pointer-events: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      overflow: hidden;
-      z-index: 9999;
-      mix-blend-mode: screen;
-    }
-
-    .raindrop {
-      position: absolute;
-      bottom: 100%;
-      width: 2px;
-      height: 15px;
-      background: #a3c1e0cc;
-      animation: fall linear infinite;
-      opacity: 0.6;
-      border-radius: 50%;
-      filter: drop-shadow(0 0 3px #a0b8ca);
-    }
-
-    @keyframes fall {
-      to {
-        transform: translateY(100vh);
-        opacity: 0;
-      }
-    }
-
-    /* === Sun (Simplified) === */
-    #sunrays {
-      position: fixed;
-      top: 70px; /* Adjusted to move the sun down a bit */
-      right: 20px;
-      width: 100px;
-      height: 100px;
-      background: #ffcc00;
-      border-radius: 50%;
-      box-shadow: 0 0 10px rgba(255, 204, 0, 0.7);
-      z-index: 9999;
-      pointer-events: none;
-      
-      /* Add for animations */
-      /* No default animation here */
-    }
-
-    /* Animations for sun fall and blow up */
-    @keyframes fallDown {
-      0% { top: 70px; opacity: 1; transform: translateY(0); }
-      100% { top: 150vh; opacity: 0; transform: translateY(200px); }
-    }
-
-    @keyframes blowUp {
-      0% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(2.5); opacity: 0; }
-      100% { transform: scale(3); opacity: 0; }
-    }
-
-    /* Classes for animation triggers */
-    .sun-fall {
-      animation: fallDown 2s forwards;
-    }
-    .sun-explode {
-      animation: blowUp 1s forwards;
-    }
-
-    /* === Butterflies container === */
-    #butterflies {
-      position: fixed;
-      top: 10%;
-      left: 0;
-      width: 100%;
-      height: 80vh;
-      pointer-events: none;
-      overflow: visible;
-      z-index: 1000;
-    }
-
-    /* Single butterfly */
-    .butterfly {
-      position: absolute;
-      width: 40px;
-      height: 40px;
-      background: url('https://cdn-icons-png.flaticon.com/512/5426/5426522.png') no-repeat center center / contain;
-      animation: flyAround 12s linear infinite;
-      opacity: 0.85;
-      filter: drop-shadow(0 0 4px #faa);
-      user-select: none;
-      pointer-events: none;
-    }
-
-    @keyframes flyAround {
-      0% { transform: translate(0, 0) rotate(0deg); }
-      25% { transform: translate(30vw, -10vh) rotate(45deg); }
-      50% { transform: translate(60vw, 5vh) rotate(0deg); }
-      75% { transform: translate(40vw, 15vh) rotate(-45deg); }
-      100% { transform: translate(0, 0) rotate(0deg); }
-    }
-    
-    /* Styles for the calculator demo */
-    .calculator-container {
-      background: #f0f8ff;
-      border: 1px solid #cceeff;
-      border-radius: 10px;
-      padding: 20px;
-      max-width: 300px;
-      margin: 20px auto;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-      text-align: center;
-    }
-    .calculator-container input[type="number"],
-    .calculator-container select {
-      width: calc(50% - 10px);
-      padding: 8px;
-      margin: 5px;
-      border: 1px solid #aaddff;
-      border-radius: 5px;
-      font-size: 1em;
-    }
-    .calculator-container button {
-      width: calc(100% - 10px);
-      margin-top: 10px;
-      padding: 10px;
-      font-size: 1.1em;
-      background: linear-gradient(135deg, #7ad7f9, #54a9e8);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    .calculator-container button:hover {
-      background: linear-gradient(135deg, #54a9e8, #7ad7f9);
-    }
-    #calculator-result {
-      margin-top: 15px;
-      font-size: 1.2em;
-      font-weight: bold;
-      color: #004d80;
-    }
-
-    .certificate {
-      background: #e6ffe6;
-      border: 5px solid #00cc00;
-      padding: 30px;
-      margin: 40px auto;
-      max-width: 700px;
-      text-align: center;
-      box-shadow: 0 0 20px rgba(0, 204, 0, 0.4);
-      border-radius: 15px;
-      font-family: 'Courier New', Courier, monospace; /* Java-like font */
-    }
-
-    .certificate pre {
-      background: #f0f0f0;
-      border: 1px solid #ccc;
-      padding: 15px;
-      text-align: left;
-      overflow-x: auto;
-      white-space: pre-wrap;
-      word-wrap: break-word;
-      font-size: 0.9em;
-    }
-  </style>
+        #certificateBtn {
+            margin-top: 20px;
+            background-color: #28a745;
+        }
+        #certificateBtn:hover {
+            background-color: #218838;
+        }
+    </style>
 </head>
-<body class="sunny">
+<body>
+    <div id="weather-container"></div>
 
-  <div class="floating-clouds" aria-hidden="true">
-    <div class="cloud">Java</div>
-    <div class="cloud">Git</div>
-    <div class="cloud">Oracle</div>
-    <div class="cloud">Ports</div>
-    <div class="cloud">NetBeans</div>
-    <div class="cloud">TigerVNC</div>
-    <div class="cloud">Putty</div>
-  </div>
+    <div class="container">
+        <h1>Monica's Cloud Quest</h1>
+        <button id="startBtn">Start Cloud Quest</button>
+        <div id="log" class="hidden" tabindex="0">Welcome to Monica's Cloud Quest!</div>
+        <div id="victory" class="hidden"></div>
+        <div id="control-buttons" style="display: none;">
+            <button id="refreshBtn">Restart Quest</button>
+            <button id="back-btn">Back to Previous Level</button>
+        </div>
+    </div>
 
-  <h1>☁️ Monica's Cloud Quest ☁️</h1>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <script>
+        // --- Game State Variables (Placeholders - define these based on your actual game) ---
+        let score = 0;
+        let currentLevel = 0;
+        const levels = [
+            { id: 1, name: "Level 1: Oracle Cloud Intro" },
+            { id: 2, name: "Level 2: Remote Desktop Tools" },
+            { id: 3, name: "Level 3: SSH Key Management" },
+            { id: 4, name: "Level 4: Java Hello World" },
+            { id: 5, name: "Level 5: Java Calculator" },
+            { id: 6, name: "Level 6: Putty Extensions" },
+            { id: 7, name: "Level 7: Fun Facts" },
+            { id: 8, name: "Level 8: Interacting with Monikat" }
+        ];
 
-  <audio id="bg-music" loop preload="auto" volume="1.0">
-    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg" />
-  </audio>
+        // --- DOM Elements ---
+        const weatherContainer = document.getElementById('weather-container');
+        const log = document.getElementById('log');
+        const victory = document.getElementById('victory');
+        const startBtn = document.getElementById('startBtn');
+        const backBtn = document.getElementById('back-btn');
+        const refreshBtn = document.getElementById('refreshBtn');
 
-  <audio id="correct-sound" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg" preload="auto"></audio>
-  <audio id="thunder-sound" src="https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg" preload="auto"></audio>
-  <audio id="awesome-choice" src="https://actions.google.com/sounds/v1/cartoon/concussive_hit_guitar_boing.ogg" preload="auto"></audio>
+        // --- Audio Elements (Placeholders - link to your actual audio files) ---
+        const bgMusic = new Audio('your-background-music.mp3'); // Replace with your audio file
+        const rainSound = new Audio('your-rain-sound.mp3');     // Replace with your audio file
+        const sunnySound = new Audio('your-sunny-sound.mp3');   // Replace with your audio file
 
-  <audio id="rain-sound" src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_3a1c1dd90d.mp3?filename=rain-loop-11488.mp3" loop preload="auto"></audio>
+        // Set audio loop and initial volume
+        bgMusic.loop = true;
+        rainSound.loop = true;
+        sunnySound.loop = true;
+        bgMusic.volume = 0.05;
+        rainSound.volume = 0.1;
+        sunnySound.volume = 0.1;
 
-  <audio id="sunny-sound" src="https://cdn.pixabay.com/download/audio/2023/08/30/audio_4e98b46e01.mp3?filename=happy-music-12666.mp3" loop preload="auto"></audio>
+        // --- Weather Effects Functions ---
+        let rainInterval;
+        let sunInterval;
 
-  <div id="rain" aria-hidden="true"></div>
+        function startRainEffect() {
+            stopSunEffect(); // Stop sun effect if active
+            weatherContainer.innerHTML = ''; // Clear previous particles
+            rainSound.play();
+            rainInterval = setInterval(() => {
+                const drop = document.createElement('div');
+                drop.classList.add('raindrop');
+                const size = Math.random() * 5 + 2; // Size between 2px and 7px
+                drop.style.width = `${size}px`;
+                drop.style.height = `${size * 3}px`; // Make them a bit elongated
+                drop.style.left = `${Math.random() * 100}%`;
+                drop.style.animationDuration = `${Math.random() * 1 + 0.5}s`; // Faster drops
+                drop.style.setProperty('--rand-x', (Math.random() * 200 - 100)); // Slight horizontal drift
+                weatherContainer.appendChild(drop);
 
-  <div id="sunrays" aria-hidden="true" aria-label="Sun rays">
-    <div class="ray" style="transform: rotate(0deg) translateX(90px);"></div>
-    <div class="ray" style="transform: rotate(30deg) translateX(90px);"></div>
-    <div class="ray" style="transform: rotate(60deg) translateX(90px);"></div>
-    <div class="ray" style="transform: rotate(90deg) translateX(90px);"></div>
-    <div class="ray" style="transform: rotate(120deg) translateX(90px);"></div>
-    <div class="ray" style="transform: rotate(150deg) translateX(90px);"></div>
-    <div class="ray" style="transform: rotate(180deg) translateX(90px);"></div>
-    <div class="ray" style="transform: rotate(210deg) translateX(90px);"></div>
-    <div class="ray" style="transform: rotate(240deg) translateX(90px);"></div>
-    <div class="ray" style="transform: rotate(270deg) translateX(90px);"></div>
-    <div class="ray" style="transform: rotate(300deg) translateX(90px);"></div>
-    <div class="ray" style="transform: rotate(330deg) translateX(90px);"></div>
-  </div>
+                // Remove drops after they fall to prevent too many DOM elements
+                drop.addEventListener('animationend', () => {
+                    drop.remove();
+                });
+            }, 50); // Create a new raindrop every 50ms
+        }
 
-  <div id="butterflies" aria-hidden="true"></div>
+        function stopRainEffect() {
+            clearInterval(rainInterval);
+            rainSound.pause();
+            rainSound.currentTime = 0; // Reset sound to beginning
+            // Optional: Clear all existing raindrops from the DOM
+            document.querySelectorAll('.raindrop').forEach(drop => drop.remove());
+        }
 
-  <div id="log" role="main" aria-live="polite" aria-atomic="true" tabindex="0"></div>
+        function startSunEffect() {
+            stopRainEffect(); // Stop rain effect if active
+            weatherContainer.innerHTML = ''; // Clear previous particles
+            sunnySound.play();
+            sunInterval = setInterval(() => {
+                const particle = document.createElement('div');
+                particle.classList.add('sun-particle');
+                const size = Math.random() * 10 + 5; // Size between 5px and 15px
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.animationDuration = `${Math.random() * 2 + 1}s`; // Slower, floating particles
+                particle.style.setProperty('--rand-x', (Math.random() * 200 - 100)); // Slight horizontal drift
+                weatherContainer.appendChild(particle);
 
-  <div class="victory hidden" id="victory" role="alert" aria-live="assertive"></div>
+                // Remove particles after they fall
+                particle.addEventListener('animationend', () => {
+                    particle.remove();
+                });
+            }, 100); // Create a new sun particle every 100ms
+        }
 
-  <button id="start-btn" class="cloud-button" aria-label="Start the game">☁️ Start</button>
+        function stopSunEffect() {
+            clearInterval(sunInterval);
+            sunnySound.pause();
+            sunnySound.currentTime = 0; // Reset sound to beginning
+            // Optional: Clear all existing sun particles from the DOM
+            document.querySelectorAll('.sun-particle').forEach(particle => particle.remove());
+        }
 
-  <div id="control-buttons" style="margin-top: 25px; display:none;">
-    <button id="back-btn" class="back-btn" aria-label="Go back to previous question">Back</button>
-    <button id="refresh-btn" class="refresh-btn" aria-label="Restart the game">Restart</button>
-  </div>
+        // --- Game Logic Functions (adapt these to your existing game) ---
+        function showLevel() {
+            // This is a placeholder. You'll integrate your actual game level display logic here.
+            // For demonstration, it just updates the log with the current level.
+            if (currentLevel < levels.length) {
+                log.innerHTML += `<br>--- Current Level: ${levels[currentLevel].name} ---<br>`;
+                log.scrollTop = log.scrollHeight; // Scroll to bottom
+                // Example: Change weather based on level
+                if (currentLevel % 2 === 0) {
+                    startRainEffect();
+                } else {
+                    startSunEffect();
+                }
+            } else {
+                endGame();
+            }
+        }
 
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
-  <script>
-    // === Variables & Elements ===
-    const log = document.getElementById('log');
-    const victory = document.getElementById('victory');
-    const startBtn = document.getElementById('start-btn');
-    const backBtn = document.getElementById('back-btn');
-    const refreshBtn = document.getElementById('refresh-btn');
-    const controlButtons = document.getElementById('control-buttons');
+        // --- End game function (from your prompt) ---
+        function endGame() {
+            log.classList.add('hidden');
+            victory.classList.remove('hidden');
+            victory.innerHTML = `
+                🎉 Congratulations! You completed Monica's Cloud Quest with a score of ${score} out of ${levels.length}! ☁️🌈
+                <br><br>
+                <strong>Message to Ben:</strong> Thanks for inspiring me to create this learning journey! 🚀
+                <br><br>
+                <button id="certificateBtn">Download Learning Certificate</button>
+            `;
+            document.getElementById('certificateBtn').addEventListener('click', generateCertificate);
+            bgMusic.pause();
+            rainSound.pause();
+            sunnySound.pause();
+            stopRainEffect(); // Ensure rain/sun effects are stopped
+            stopSunEffect();
 
-    const bgMusic = document.getElementById('bg-music');
-    const correctSound = document.getElementById('correct-sound');
-    const thunderSound = document.getElementById('thunder-sound');
-    const awesomeChoice = document.getElementById('awesome-choice');
-    const rainSound = document.getElementById('rain-sound');
-    const sunnySound = document.getElementById('sunny-sound');
+            // Confetti animation
+            const duration = 6000;
+            const endTime = Date.now() + duration;
+            (function frame() {
+                confetti({ particleCount: 6, angle: 60, spread: 70, origin: { x: 0 } });
+                confetti({ particleCount: 6, angle: 120, spread: 70, origin: { x: 1 } });
+                if (Date.now() < endTime) {
+                    requestAnimationFrame(frame);
+                }
+            })();
 
-    const rainContainer = document.getElementById('rain');
-    const butterfliesContainer = document.getElementById('butterflies');
-    const floatingCloudsContainer = document.querySelector('.floating-clouds');
+            // Show control buttons
+            document.getElementById('control-buttons').style.display = 'block';
+            document.getElementById('back-btn').style.display = 'none'; // Back button not needed at end
+        }
 
-    const sun = document.getElementById('sunrays'); // reference to sun element
+        // --- Generate certificate (from your prompt) ---
+        function generateCertificate() {
+            const certText = `
+Monica's Cloud Quest Learning Certificate
 
-    let currentLevel = 0;
-    let score = 0;
+Congratulations!
 
-    // Keep track if rain effect active
-    let isRaining = false;
+You have demonstrated learning outcomes in:
+- Oracle Cloud basics
+- Remote desktop tools (TigerVNC, Putty)
+- SSH key management
+- Java programming (Hello World, Calculator)
+- Understanding Putty extensions
+- Fun facts about remote tools
+- Interacting with Monikat!
 
-    // === Original and added questions combined ===
-    const levels = [
-      {
-        question: "Which is the best way to start with Oracle Cloud?",
-        answers: [
-          { text: "Use Facebook Login", correct: false },
-          { text: "Create an Oracle Cloud account", correct: true },
-          { text: "Download Oracle NetBeans", correct: false },
-          { text: "Use AWS instead", correct: false }
-        ],
-        hint: "You need an official Oracle account first."
-      },
-      {
-        question: "Why did Monica create 2 VMs in Oracle Cloud?",
-        answers: [
-          { text: "First VM was too small to run everything", correct: true },
-          { text: "Wanted a backup VM", correct: false },
-          { text: "Just to experiment with multiple VMs", correct: false },
-          { text: "Because of cost savings", correct: false }
-        ],
-        hint: "Capacity was the issue."
-      },
-      {
-        question: "What remote desktop tool did Monica install on her VMs?",
-        answers: [
-          { text: "TigerVNC", correct: true },
-          { text: "TeamViewer", correct: false },
-          { text: "AnyDesk", correct: false },
-          { text: "Remote Desktop Protocol (RDP)", correct: false }
-        ],
-        hint: "Starts with 'Tiger'."
-      },
-      {
-        question: "How did Monica handle opening ports in Oracle Cloud?",
-        answers: [
-          { text: "Added specific ports for services", correct: true },
-          { text: "Blocked all ports for security", correct: false },
-          { text: "Left default ports open", correct: false },
-          { text: "Didn't configure ports", correct: false }
-        ],
-        hint: "She customized port access."
-      },
-      {
-        question: "Which tools did Monica learn to install on her VMs?",
-        answers: [
-          { text: "TigerVNC, Git, Java Learning", correct: true },
-          { text: "Docker, Kubernetes", correct: false },
-          { text: "Photoshop, Illustrator", correct: false },
-          { text: "VMware, Hyper-V", correct: false }
-        ],
-        hint: "Includes version control and remote desktop."
-      },
-      {
-        question: "Monica learned to code Java. Which IDE is popular for Java development?",
-        answers: [
-          { text: "NetBeans", correct: true },
-          { text: "Visual Studio Code", correct: false },
-          { text: "Sublime Text", correct: false },
-          { text: "PyCharm", correct: false }
-        ],
-        hint: "Oracle owns this IDE."
-      },
-      {
-        question: "Let's try a simple Java demo! Type exactly: System.out.println(\"Hello, Oracle!\");",
-        demo: true,
-        hint: "Match capitalization, punctuation exactly.",
-        correctDemoInput: 'System.out.println("Hello, Oracle!");',
-        demoSuccessMsg: "Great job! You've run your first Java print statement!"
-      },
-      { // New Level 1: Why critical error after logging into Putty?
-        question: "Why might you get a critical error after trying to log into Putty?",
-        answers: [
-          { text: "Your network cable is unplugged", correct: false },
-          { text: "You need an SSH private key", correct: true },
-          { text: "The moon is in retrograde", correct: false },
-          { text: "Your keyboard is not connected", correct: false }
-        ],
-        hint: "Putty often requires a secure authentication method."
-      },
-      { // New Level 2: Why private key not work in Putty?
-        question: "Why might the private key not work in Putty?",
-        answers: [
-          { text: "It's the wrong color", correct: false },
-          { text: "It is not configured correctly and needs proper extension!", correct: true },
-          { text: "You need to restart your computer first", correct: false },
-          { text: "It's a public holiday", correct: false }
-        ],
-        hint: "File format and setup are crucial for private keys."
-      },
-      { // New Level 3: Proper extension for Putty private key?
-        question: "What is the proper extension for a Putty private key?",
-        answers: [
-          { text: ".ocp", correct: false },
-          { text: ".ppk", correct: true },
-          { text: ".notta", correct: false },
-          { text: ".tgif", correct: false },
-          { text: ".txt", correct: false },
-          { text: ".jpg", correct: false }
-        ],
-        hint: "Think about the common Putty Key file extension."
-      },
-      { // New Level 4: Fun fact - Putty vs. TigerVNC
-        question: "Fun Fact: What is the main difference between Putty and TigerVNC?",
-        answers: [
-          { text: "Putty is a dessert, TigerVNC is a main course", correct: false },
-          { text: "Putty is for secure shell (SSH) access; TigerVNC is for graphical remote desktop access.", correct: true },
-          { text: "They are both used to edit documents.", correct: false },
-          { text: "One is a cat, the other is clay.", correct: false },
-          { text: "Putty is a web browser, TigerVNC is an email client.", correct: false }
-        ],
-        hint: "Consider their primary use cases for remote access."
-      },
-      { // New Level 5: Java Calculator Demo
-        question: "Let's demonstrate a simple Java concept: a basic calculator! Enter two numbers and pick an operation.",
-        calculatorDemo: true,
-        hint: "This shows how Java can handle basic arithmetic."
-      }
-    ];
+Keep up your learning! 🚀
+            `;
+            const blob = new Blob([certText], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'Learning_Certificate.txt';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
 
-    // Function to add a new cloud bubble
-    function addCloudBubble(text) {
-        const newCloud = document.createElement('div');
-        newCloud.classList.add('cloud');
-        newCloud.textContent = text;
-        // Position new cloud dynamically or based on a specific index
-        // For simplicity, let's just append and let CSS handle default positioning
-        // You might need to adjust .floating-clouds .cloud:nth-child rules or make positioning dynamic if many bubbles are added.
-        newCloud.style.top = `${Math.random() * 20 + 5}px`; // Randomize vertical position slightly
-        newCloud.style.left = `${Math.random() * 100}vw`; // Randomize horizontal start position
-        newCloud.style.animationDelay = `${Math.random() * 5}s`; // Randomize animation delay
-        floatingCloudsContainer.appendChild(newCloud);
-    }
-
-    // Add the "Putty" cloud bubble
-    addCloudBubble("Putty");
-
-
-    // === Functions for Sun Animations ===
-    function sunFall() {
-      sun.classList.remove('sun-explode');
-      sun.classList.add('sun-fall');
-    }
-    function sunBlowUp() {
-      sun.classList.remove('sun-fall');
-      sun.classList.add('sun-explode');
-    }
-    function resetSun() {
-      sun.classList.remove('sun-fall', 'sun-explode');
-      sun.style.top = '70px'; // Reset position
-      // Reset transforms and opacity just in case
-      sun.style.transform = '';
-      sun.style.opacity = '';
-    }
-
-    // === Rain effect: create raindrops ===
-    function createRainDrops(numDrops = 50) {
-      rainContainer.innerHTML = '';
-      for (let i = 0; i < numDrops; i++) {
-        const drop = document.createElement('div');
-        drop.classList.add('raindrop');
-        drop.style.left = Math.random() * 100 + 'vw';
-        drop.style.animationDuration = (0.7 + Math.random() * 0.8) + 's';
-        drop.style.animationDelay = (Math.random() * 5) + 's';
-        drop.style.opacity = (0.3 + Math.random() * 0.7).toFixed(2);
-        drop.style.width = (1 + Math.random() * 3) + 'px';
-        drop.style.height = (8 + Math.random() * 12) + 'px';
-        rainContainer.appendChild(drop);
-      }
-    }
-
-    // Start rain
-    function startRain() {
-      if (!isRaining) {
-        createRainDrops(80);
-        rainSound.volume = 0.15;
-        rainSound.play();
-        isRaining = true;
-        document.body.classList.add('rainy');
-        document.body.classList.remove('sunny');
-        sunnySound.pause();
-      }
-    }
-
-    // Stop rain
-    function stopRain() {
-      if (isRaining) {
-        rainContainer.innerHTML = '';
-        rainSound.pause();
-        isRaining = false;
-        document.body.classList.remove('rainy');
-        document.body.classList.add('sunny');
-        sunnySound.volume = 0.15;
-        sunnySound.play();
-      }
-    }
-
-    // === Create butterflies and animate ===
-    function createButterflies(num = 6) {
-      butterfliesContainer.innerHTML = '';
-      for (let i = 0; i < num; i++) {
-        const butterfly = document.createElement('div');
-        butterfly.classList.add('butterfly');
-        // Random start position and delay for smooth flying effect
-        butterfly.style.top = `${Math.random() * 70 + 10}vh`;
-        butterfly.style.left = `${Math.random() * 100}vw`;
-        butterfly.style.animationDelay = `${Math.random() * 12}s`;
-        butterfliesContainer.appendChild(butterfly);
-      }
-    }
-
-    createButterflies();
-
-    // === Show current question or demo ===
-    function showLevel() {
-      // Reset rain & sounds
-      stopRain();
-
-      // Show back and refresh buttons except for first question
-      controlButtons.style.display = currentLevel === 0 ? 'none' : 'block';
-
-      log.innerHTML = '';
-      victory.classList.add('hidden');
-
-      if (currentLevel >= levels.length) {
-        endGame();
-        return;
-      }
-
-      const level = levels[currentLevel];
-
-      const questionEl = document.createElement('h2');
-      questionEl.textContent = level.question;
-      log.appendChild(questionEl);
-
-      // Show hint
-      const hintEl = document.createElement('p');
-      hintEl.style.fontStyle = 'italic';
-      hintEl.style.color = '#666';
-      hintEl.textContent = 'Hint: ' + level.hint;
-      log.appendChild(hintEl);
-
-      if (level.demo) {
-        // Demo input box for Java print statement
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.style.fontSize = '1.1em';
-        input.style.width = '85%';
-        input.style.padding = '10px';
-        input.setAttribute('aria-label', 'Java demo input');
-        input.value = '';
-        log.appendChild(input);
-
-        const runBtn = document.createElement('button');
-        runBtn.textContent = 'Run Code';
-        runBtn.style.marginTop = '12px';
-        runBtn.addEventListener('click', () => {
-          const userInput = input.value.trim();
-          if (userInput === level.correctDemoInput) {
-            awesomeChoice.play();
-            alert(level.demoSuccessMsg);
-            score++;
-            currentLevel++;
+        // --- Event Listeners (from your prompt and integrated with new effects) ---
+        startBtn.addEventListener('click', () => {
+            startBtn.classList.add('hidden');
+            log.classList.remove('hidden');
+            victory.classList.add('hidden');
+            score = 0;
+            currentLevel = 0;
+            bgMusic.volume = 0.05;
+            bgMusic.play();
+            // Initial weather effect when starting
+            startSunEffect(); // Start with sun, or choose based on first level
+            document.getElementById('control-buttons').style.display = 'block'; // Show controls
+            document.getElementById('back-btn').style.display = 'block'; // Show back button
             showLevel();
-          } else {
-            thunderSound.play();
-            startRain();
-            alert("Oops, that's not quite right. Try again!");
-          }
-        });
-        log.appendChild(runBtn);
-
-        // Enter key runs code
-        input.addEventListener('keydown', e => {
-          if (e.key === 'Enter') runBtn.click();
         });
 
-      } else if (level.calculatorDemo) {
-        // Java Calculator Demo
-        const calculatorContainer = document.createElement('div');
-        calculatorContainer.classList.add('calculator-container');
-        calculatorContainer.innerHTML = `
-          <input type="number" id="num1" placeholder="Enter number 1" value="10">
-          <select id="operator">
-            <option value="+">+</option>
-            <option value="-">-</option>
-            <option value="*">*</option>
-            <option value="/">/</option>
-          </select>
-          <input type="number" id="num2" placeholder="Enter number 2" value="5">
-          <button id="calculateBtn">Calculate</button>
-          <div id="calculator-result">Result:</div>
-        `;
-        log.appendChild(calculatorContainer);
-
-        const num1Input = document.getElementById('num1');
-        const num2Input = document.getElementById('num2');
-        const operatorSelect = document.getElementById('operator');
-        const calculateBtn = document.getElementById('calculateBtn');
-        const calculatorResult = document.getElementById('calculator-result');
-
-        calculateBtn.addEventListener('click', () => {
-          const num1 = parseFloat(num1Input.value);
-          const num2 = parseFloat(num2Input.value);
-          const operator = operatorSelect.value;
-          let result;
-
-          if (isNaN(num1) || isNaN(num2)) {
-            calculatorResult.textContent = "Result: Please enter valid numbers!";
-            thunderSound.play();
-            startRain();
-            return;
-          }
-
-          switch (operator) {
-            case '+':
-              result = num1 + num2;
-              break;
-            case '-':
-              result = num1 - num2;
-              break;
-            case '*':
-              result = num1 * num2;
-              break;
-            case '/':
-              if (num2 === 0) {
-                calculatorResult.textContent = "Result: Cannot divide by zero!";
-                thunderSound.play();
-                startRain();
-                return;
-              }
-              result = num1 / num2;
-              break;
-          }
-          calculatorResult.textContent = `Result: ${result}`;
-          awesomeChoice.play();
-          stopRain();
-          score++;
-          setTimeout(() => {
-            currentLevel++;
-            showLevel();
-          }, 1500); // Give a moment to see the result
+        backBtn.addEventListener('click', () => {
+            if (currentLevel > 0) {
+                currentLevel--;
+                showLevel();
+            }
         });
 
-      } else {
-        // Show answer options as buttons
-        const optionsDiv = document.createElement('div');
-        optionsDiv.id = 'options';
+        refreshBtn.addEventListener('click', () => {
+            if (confirm("Are you sure you want to restart the quest?")) {
+                score = 0;
+                currentLevel = 0;
+                victory.classList.add('hidden');
+                log.classList.remove('hidden');
+                startBtn.classList.add('hidden'); // Keep start button hidden if game is already active
+                bgMusic.volume = 0.05;
+                bgMusic.play();
+                startSunEffect(); // Restart with sun effect
+                document.getElementById('control-buttons').style.display = 'block';
+                document.getElementById('back-btn').style.display = 'block';
+                showLevel();
+            }
+        });
 
-        level.answers.forEach(answer => {
-          const btn = document.createElement('button');
-          btn.textContent = answer.text;
-          btn.setAttribute('aria-label', `Answer option: ${answer.text}`);
-          btn.addEventListener('click', () => {
-            if (answer.correct) {
-              correctSound.play();
-              score++;
-              stopRain();
-              resetSun(); // Reset sun to normal for next question
-              setTimeout(() => {
+        // Focus log when content changes
+        const observer = new MutationObserver(() => {
+            log.focus();
+        });
+        observer.observe(log, { childList: true });
+
+        // Example for progressing levels (you'll replace this with your actual game logic)
+        // For demonstration purposes, let's add a simple way to "complete" a level
+        // You would typically call this when a user answers correctly or completes a task.
+        log.addEventListener('click', () => {
+            if (!victory.classList.contains('hidden')) return; // Don't progress if game is over
+
+            if (currentLevel < levels.length) {
+                score++; // Simulate a correct answer
                 currentLevel++;
                 showLevel();
-              }, 1100);
             } else {
-              thunderSound.play();
-              startRain();
-
-              // Animate the sun falling or blowing up
-              // Uncomment one:
-              sunFall(); // for falling down
-              // sunBlowUp(); // for blowing up
-
-              // Change button style
-              btn.style.background = '#cc3300';
-              btn.disabled = true;
+                endGame();
             }
-          });
-          optionsDiv.appendChild(btn);
         });
-        log.appendChild(optionsDiv);
-      }
-    }
-
-    // === End of game: show victory and confetti ===
-    function endGame() {
-      log.classList.add('hidden');
-      victory.classList.remove('hidden');
-      victory.innerHTML = `
-        🎉 Congratulations! You completed Monica's Cloud Quest with a score of ${score} out of ${levels.length}! ☁️🌈
-        <br><br>
-        <strong>Message to Ben:</strong> Thanks for inspiring me to create this learning journey! 🚀
-        <div class="certificate">
-          <h3>// BEGIN Java Learning Certificate</h3>
-          <pre>
-public class MonicaLearningCertificate {
-
-    // Date of Completion
-    private final String completionDate = "${new Date().toLocaleDateString()}";
-
-    // Learner's Name
-    private final String learnerName = "Monica";
-
-    // Topics Covered
-    private final String[] topicsCovered = {
-        "Oracle Cloud Infrastructure Basics",
-        "Virtual Machine Provisioning",
-        "Remote Access with TigerVNC",
-        "Network Port Configuration",
-        "Git Version Control Basics",
-        "Java Development Environment Setup (NetBeans)",
-        "Basic Java Syntax (System.out.println)",
-        "Putty SSH Client Usage",
-        "SSH Private Key Management (.ppk format)",
-        "Understanding Putty vs. TigerVNC Use Cases",
-        "Basic Java Arithmetic Operations (Calculator Demo)"
-    };
-
-    // Performance Score
-    private final String performance = "${score} out of ${levels.length} questions correct.";
-
-    // Certification Message
-    private final String message = "Monica has successfully demonstrated foundational knowledge " +
-                                   "in cloud technologies and Java programming, proving her " +
-                                   "commitment to continuous learning and technical growth. " +
-                                   "Her Cloud Quest journey highlights practical application " +
-                                   "of learned concepts.";
-
-    public static void main(String[] args) {
-        MonicaLearningCertificate certificate = new MonicaLearningCertificate();
-        certificate.displayCertificate();
-    }
-
-    public void displayCertificate() {
-        System.out.println("-------------------------------------------------------");
-        System.out.println("  CERTIFICATE OF JAVA AND CLOUD LEARNING ACHIEVEMENT");
-        System.out.println("-------------------------------------------------------");
-        System.out.println("  Learner: " + learnerName);
-        System.out.println("  Completion Date: " + completionDate);
-        System.out.println("");
-        System.out.println("  Successfully completed the 'Cloud Quest' demonstrating:");
-        for (int i = 0; i < topicsCovered.length; i++) {
-            System.out.println("    " + (i + 1) + ". " + topicsCovered[i]);
-        }
-        System.out.println("");
-        System.out.println("  Performance: " + performance);
-        System.out.println("");
-        System.out.println("  Recognition: " + message);
-        System.out.println("-------------------------------------------------------");
-        System.out.println("  Issued by: Ben's Inspired Learning Initiative");
-        System.out.println("-------------------------------------------------------");
-    }
-}
-          </pre>
-          <h3>// END Java Learning Certificate</h3>
-        </div>
-        `;
-      bgMusic.pause();
-      rainSound.pause();
-      sunnySound.pause();
-
-      // Fire confetti for 6 seconds
-      const duration = 6 * 1000;
-      const end = Date.now() + duration;
-
-      (function frame() {
-        confetti({
-          particleCount: 6,
-          angle: 60,
-          spread: 70,
-          origin: { x: 0 }
-        });
-        confetti({
-          particleCount: 6,
-          angle: 120,
-          spread: 70,
-          origin: { x: 1 }
-        });
-
-        if (Date.now() < end) {
-          requestAnimationFrame(frame);
-        }
-      })();
-
-      // Show refresh button only
-      controlButtons.style.display = 'block';
-      backBtn.style.display = 'none';
-    }
-
-    // === Event Listeners ===
-
-    // Start game
-    startBtn.addEventListener('click', () => {
-      startBtn.classList.add('hidden');
-      log.classList.remove('hidden');
-      victory.classList.add('hidden');
-      score = 0;
-      currentLevel = 0;
-      bgMusic.volume = 0.05; // Lower volume
-      bgMusic.play();
-      sunnySound.volume = 0.1;
-      sunnySound.play();
-      showLevel();
-    });
-
-    // Back button to go back one question
-    backBtn.addEventListener('click', () => {
-      if (currentLevel > 0) {
-        currentLevel--;
-        showLevel();
-      }
-    });
-
-    // Refresh button to restart game fully
-    refreshBtn.addEventListener('click', () => {
-      score = 0;
-      currentLevel = 0;
-      victory.classList.add('hidden');
-      log.classList.remove('hidden');
-      startBtn.classList.add('hidden');
-      bgMusic.volume = 0.05;
-      bgMusic.play();
-      sunnySound.volume = 0.1;
-      sunnySound.play();
-      showLevel();
-    });
-
-    // Focus log area after each level
-    const observer = new MutationObserver(() => {
-      log.focus();
-    });
-    observer.observe(log, { childList: true });
-  </script>
+    </script>
 </body>
 </html>
