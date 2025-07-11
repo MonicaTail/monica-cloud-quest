@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>☁️ Monica's Cloud Quest ☁️</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+    <style>
+        /* === Page Styles === */
+        body {
+            background: linear-gradient(to bottom, #fff9db, #f7e7a7);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            padding: 50px;
+            overflow-x: hidden;
+            color: #003366;
+            user-select: none;
+            min-height: 100vh;
+            transition: background 1s ease;
+        }
+        body.rainy {
+            background: linear-gradient(to bottom, #546a7b, #a0b8ca);
+            filter: brightness(0.85);
+        }
+        body.sunny {
+            background: linear-gradient(to bottom, #fff9db, #f7e7a7);
+            filter: brightness(1.1);
+        }
+        h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            animation: popIn 2s ease;
+            text-shadow: 0 0 15px #4fa1d8;
+        }
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        /* Buttons styling */
+        button {
+            padding: 14px 28px;
+            margin: 12px;
+            font-size: 16px;
+            background: linear-gradient(145deg, #a7d7f9, #89c2f7);
+            color: #003366;
+            border: 2px solid #4fa1d8;
+            border-radius: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
+            font-weight: 600;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            user-select: none;
+            position: relative;
+            overflow: hidden;
+        }
+        button:hover:not(:disabled) {
+            background: linear-gradient(145deg, #89c2f7, #a7d7f9);
+            transform: scale(1.1) rotate(-1deg);
+            box-shadow: 0 10px 25px rgba(0, 119, 204, 0.6);
+        }
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            box-shadow: none;
+            color: #666;
+        }
+        /* Back and refresh buttons styles */
+        .back-btn {
+            background: #bbb !important;
+            color: #222 !important;
+        }
+        .refresh-btn {
+            background: #ffd54f !important;
+            color: #333 !important;
+            border-color: #ffca28 !important;
+        }
+        /* Hidden class */
+        .hidden {
+            display: none;
+        }
+        /* Log area styles */
+        #log {
+            text-align: left;
+            margin-top: 30px;
+            background: transparent;
+            padding: 25px 30px;
+            border-radius: 15px;
+            max-width: 840px;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: none;
+            min-height: 220px;
+            font-size: 1.1em;
+            color: #003366;
+            user-select: text;
+            position: relative;
+            z-index: 10;
+        }
+        /* Victory message styles */
+        .victory {
+            color: #1b5e20;
+            font-weight: bold;
+            margin-top: 40px;
+            font-size: 1.8em;
+            text-shadow: 0 0 15px #00cc00;
+            animation: glow 1.5s ease-in-out infinite alternate;
+            max-width: 840px;
+            margin-left: auto;
+            margin-right: auto;
+            background: #e6ffe6cc;
+            padding: 30px;
+            border-radius: 18px;
+            box-shadow: 0 0 30px #00cc00aa;
+            position: relative;
+            overflow: hidden;
+            z-index: 10;
+        }
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 15px #00cc00, 0 0 25px #00cc00;
+            }
+            to {
+                text-shadow: 0 0 25px #00ff00, 0 0 35px #00ff00;
+            }
+        }
+        /* Avatar selection styles */
+        .avatar-selection {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+            margin: 35px auto 15px auto;
+            position: relative;
+            z-index: 10;
+        }
+        .avatar {
+            cursor: pointer;
+            border: 5px solid transparent;
+            border-radius: 50%;
+            width: 140px;
+            height: 140px;
+            transition: all 0.35s ease-in-out;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+            filter: drop-shadow(0 0 3px #77bfff);
+            user-select: none;
+            position: relative;
+            background: #d0e8ff;
+        }
+        .avatar:hover, .avatar.selected {
+            transform: scale(1.15) rotate(-5deg);
+            border-color: #0077cc;
+            box-shadow: 0 0 28px rgba(0, 119, 204, 0.85);
+            filter: drop-shadow(0 0 12px #3399ff);
+            background: linear-gradient(145deg, #89c2f7, #a7d7f9);
+        }
+        /* Character message styles */
+        #character-message {
+            font-style: italic;
+            color: #004d80;
+            margin-top: 15px;
+            font-size: 1.15em;
+            min-height: 40px;
+            max-width: 720px;
+            margin-left: auto;
+            margin-right: auto;
+            user-select: none;
+            transition: all 0.3s ease-in-out;
+            position: relative;
+            z-index: 10;
+        }
+        /* Option buttons styles */
+        #options button {
+            display: block;
+            width: 100%;
+            max-width: 400px;
+            margin: 12px auto;
+            font-size: 1.1em;
+            border-radius: 22px;
+            background: linear-gradient(135deg, #9cd3f5, #5fa9f5);
+            color: #002244;
+            font-weight: 700;
+            letter-spacing: 0.9px;
+            box-shadow: 0 6px 18px rgba(45, 118, 205, 0.7);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            user-select: none;
+            position: relative;
+            overflow: hidden;
+        }
+        #options button:hover:not(:disabled) {
+            transform: scale(1.15) rotate(1deg);
+            box-shadow: 0 10px 28px rgba(0, 120, 255, 0.9);
+            background: linear-gradient(135deg, #5fa9f5, #9cd3f5);
+            color: #001a3c;
+        }
+        /* Cloud Button style (interactive cloud) */
+        .cloud-button {
+            font-size: 4rem;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            transition: transform 0.3s ease, filter 0.3s ease;
+            user-select: none;
+            color: #3399ff;
+            filter: drop-shadow(0 0 8px #66b3ff);
+            margin: 10px auto 30px auto;
+            display: inline-block;
+            position: relative;
+            z-index: 10;
+        }
+        .cloud-button:hover {
+            transform: scale(1.3) rotate(-10deg);
+            color: #66ccff;
+            filter: drop-shadow(0 0 20px #99ddff);
+        }
+        /* Floating clouds at top styles */
+        .floating-clouds {
+            position: fixed;
+            top: 10px;
+            left: 0;
+            width: 100%;
+            height: 50px;
+            pointer-events: none;
+            overflow: visible;
+            z-index: 5;
+        }
+        .floating-clouds .cloud {
+            position: absolute;
+            background: #ffffffcc;
+            border-radius: 50% / 60%;
+            padding: 10px 25px;
+            font-weight: bold;
+            color: #336699;
+            box-shadow: 0 0 15px #ccc;
+            animation: floatClouds 6s ease-in-out infinite alternate;
+            font-size: 1.2rem;
+            user-select: none;
+            filter: drop-shadow(0 0 6px #a0c8ff);
+            cursor: default;
+            white-space: nowrap;
+        }
+        .floating-clouds .cloud:nth-child(odd) {
+            animation-duration: 8s;
+        }
+        .floating-clouds .cloud:nth-child(1) { top: 5px; left: 6%; }
+        .floating-clouds .cloud:nth-child(2) { top: 12px; left: 23%; }
+        .floating-clouds .cloud:nth-child(3) { top: 8px; left: 38%; }
+        .floating-clouds .cloud:nth-child(4) { top: 5px; left: 52%; }
+        .floating-clouds .cloud:nth-child(5) { top: 12px; left: 68%; }
+        .floating-clouds .cloud:nth-child(6) { top: 8px; left: 83%; }
+        @keyframes floatClouds {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(50px); }
+        }
+        /* Rain effect styles */
+        #rain {
+            pointer-events: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            overflow: hidden;
+            z-index: 9999;
+            mix-blend-mode: screen;
+        }
+        .raindrop {
+            position: absolute;
+            bottom: 100%;
+            width: 2px;
+            height: 15px;
+            background: #a3c1e0cc;
+            animation: fall linear infinite;
+            opacity: 0.6;
+            border-radius: 50%;
+            filter: drop-shadow(0 0 3px #a0b8ca);
+        }
+        @keyframes fall {
+            to {
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+        }
+        /* Sun styles */
+        #sunrays {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            width: 100px;
+            height: 100px;
+            background: #ffcc00;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(255, 204, 0, 0.7);
+            z-index: 9999;
+            pointer-events: none;
+        }
+        @keyframes fallDown {
+            0% { top: 70px; opacity: 1; transform: translateY(0); }
+            100% { top: 150vh; opacity: 0; transform: translateY(200px); }
+        }
+        @keyframes blowUp {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(2.5); opacity: 0; }
+            100% { transform: scale(3); opacity: 0; }
+        }
+        .sun-fall {
+            animation: fallDown 2s forwards;
+        }
+        .sun-explode {
+            animation: blowUp 1s forwards;
+        }
+        /* Butterflies styles */
+        #butterflies {
+            position: fixed;
+            top: 10%;
+            left: 0;
+            width: 100%;
+            height: 80vh;
+            pointer-events: none;
+            overflow: visible;
+            z-index: 1000;
+        }
+        .butterfly {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: url('https://cdn-icons-png.flaticon.com/512/5426/5426522.png') no-repeat center center / contain;
+            animation: flyAround 12s linear infinite;
+            opacity: 0.85;
+            filter: drop-shadow(0 0 4px #faa);
+            user-select: none;
+            pointer-events: none;
+        }
+        @keyframes flyAround {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(30vw, -10vh) rotate(45deg); }
+            50% { transform: translate(60vw, 5vh) rotate(0deg); }
+            75% { transform: translate(40vw, 15vh) rotate(-45deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+        /* Bubble on top with "Putty" */
+        .top-bubble {
+            position: fixed;
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #ffe0b2;
+            padding: 15px 25px;
+            border-radius: 35px;
+            font-weight: bold;
+            font-size: 1.2em;
+            box-shadow: 0 0 15px #ccc;
+            z-index: 100;
+            border: 3px solid #ffb74d;
+            display: none;
+        }
+        /* Chatbot Styles */
+        #monikat-chat-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 300px;
+            height: 400px;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: flex; /* Changed to flex to be always visible */
+            flex-direction: column;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            z-index: 999;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        #monikat-chat-header {
+            background: linear-gradient(145deg, #a7d7f9, #89c2f7);
+            color: #003366;
+            padding: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            text-align: center;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            cursor: default;
+            user-select: none;
+        }
+
+        #monikat-chat-log {
+            flex-grow: 1;
+            padding: 10px;
+            overflow-y: auto;
+            background-color: white;
+            word-wrap: break-word;
+            border-bottom: 1px solid #eee;
+        }
+
+        #monikat-chat-log p {
+            margin: 5px 0;
+            line-height: 1.4;
+        }
+
+        /* Styles for Monikat's message */
+        #monikat-chat-log p strong {
+            color: #0056b3;
+        }
+        /* Styles for user's message */
+        #monikat-chat-log p.user-message {
+            text-align: right;
+            color: #1b5e20;
+        }
+
+
+        #monikat-chat-input-area {
+            display: flex;
+            padding: 10px;
+            background-color: #f0f0f0;
+        }
+
+        #chat-input {
+            flex-grow: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-right: 5px;
+            font-size: 0.9em;
+            background-color: white;
+            color: #333;
+        }
+
+        #send-button {
+            padding: 8px 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background-color 0.2s ease;
+        }
+
+        #send-button:hover {
+            background-color: #0056b3;
+        }
+
+        .java-code-display {
+            background-color: #333;
+            color: #eee;
+            font-family: 'Consolas', 'Monaco', monospace;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            white-space: pre-wrap;
+            text-align: left;
+            overflow-x: auto;
+        }
+
+        /* Certificate Styles */
+        #certificate {
+            background: linear-gradient(135deg, #f0f9ff, #cde7ff);
+            border: 10px solid #0077cc;
+            padding: 40px;
+            margin-top: 50px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+            font-family: 'Georgia', serif;
+            color: #003366;
+            display: none; /* Hidden by default */
+            z-index: 100;
+            position: relative;
+        }
+        #certificate h2 {
+            font-size: 2.5em;
+            color: #0056b3;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        #certificate p {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
+        #certificate .name {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin: 20px 0;
+            color: #d9534f; /* A nice contrasting color */
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+        }
+        #certificate .score {
+            font-size: 1.5em;
+            margin-top: 25px;
+            color: #28a745;
+            font-weight: bold;
+        }
+        #certificate img {
+            width: 150px;
+            height: auto;
+            margin-top: 30px;
+            border-radius: 50%;
+            border: 4px solid #fff;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body class="sunny">
+    <div class="floating-clouds" aria-hidden="true">
+        <div class="cloud">Java</div>
+        <div class="cloud">Git</div>
+        <div class="cloud">Oracle</div>
+        <div class="cloud">Ports</div>
+        <div class="cloud">NetBeans</div>
+        <div class="cloud">TigerVNC</div>
+    </div>
+
+    <div class="top-bubble" id="puttyBubble">Putty</div>
+
+    <h1>☁️ Monica's Cloud Quest ☁️</h1>
+
+    <audio id="bg-music" loop preload="auto" volume="1.0">
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg" />
+    </audio>
+
+    <audio id="correct-sound" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg" preload="auto"></audio>
+    <audio id="thunder-sound" src="https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg" preload="auto"></audio>
+    <audio id="awesome-choice" src="https://actions.google.com/sounds/v1/cartoon/concussive_hit_guitar_boing.ogg" preload="auto"></audio>
+    <audio id="rain-sound" src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_3a1c1dd90d.mp3?filename=rain-loop-11488.mp3" loop preload="auto"></audio>
+    <audio id="sunny-sound" src="https://cdn.pixabay.com/download/audio/2023/08/30/audio_4e98b46e01.mp3?filename=happy-music-12666.mp3" loop preload="auto"></audio>
+
+    <div id="rain" aria-hidden="true"></div>
+
+    <div id="sunrays" aria-hidden="true" aria-label="Sun rays">
+        <div class="ray" style="transform: rotate(0deg) translateX(90px);"></div>
+        <div class="ray" style="transform: rotate(30deg) translateX(90px);"></div>
+        <div class="ray" style="transform: rotate(60deg) translateX(90px);"></div>
+        <div class="ray" style="transform: rotate(90deg) translateX(90px);"></div>
+        <div class="ray" style="transform: rotate(120deg) translateX(90px);"></div>
+        <div class="ray" style="transform: rotate(150deg) translateX(90px);"></div>
+        <div class="ray" style="transform: rotate(180deg) translateX(90px);"></div>
+        <div class="ray" style="transform: rotate(210deg) translateX(90px);"></div>
+        <div class="ray" style="transform: rotate(240deg) translateX(90px);"></div>
+        <div class="ray" style="transform: rotate(270deg) translateX(90px);"></div>
+        <div class="ray" style="transform: rotate(300deg) translateX(90px);"></div>
+        <div class="ray" style="transform: rotate(330deg) translateX(90px);"></div>
+    </div>
+
+    <div id="butterflies" aria-hidden="true"></div>
+
+    <div id="log" role="main" aria-live="polite" aria-atomic="true" tabindex="0"></div>
+
+    <div class="victory hidden" id="victory" role="alert" aria-live="assertive"></div>
+
+    <div id="certificate" class="hidden">
+        <h2>Certificate of Completion</h2>
+        <p>This certifies that</p>
+        <p class="name">A Cloud Quest Enthusiast</p>
+        <p>has successfully completed</p>
+        <p><strong>Monica's Cloud Quest</strong></p>
+        <p class="score">With a score of <span id="final-score">0</span> out of <span id="total-questions">0</span> questions correct!</p>
+        <img src="https://img.icons8.com/plasticine/100/medal2.png" alt="Award Medal">
+        <p style="margin-top: 30px; font-size: 0.9em; font-style: italic;">Congratulations on your cloud learning journey!</p>
+    </div>
+
+    <button id="start-btn" class="cloud-button" aria-label="Start the game">☁️ Start</button>
+
+    <div id="control-buttons" style="margin-top: 25px; display:none;">
+        <button id="back-btn" class="back-btn" aria-label="Go back to previous question">Back</button>
+        <button id="refresh-btn" class="refresh-btn" aria-label="Restart the game">Restart</button>
+    </div>
+
+    <div id="monikat-chat-container">
+        <div id="monikat-chat-header">Monikat Chat</div>
+        <div id="monikat-chat-log">
+            <p><strong>Monikat:</strong> Welcome to Monica's Cloud Quest! Ask me anything about Oracle Cloud, Java, or the game! Try typing 'hello'.</p>
+        </div>
+        <div id="monikat-chat-input-area">
+            <input type="text" id="chat-input" placeholder="Type your message...">
+            <button id="send-button">Send</button>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script>
+        // Variables & Elements
+        const log = document.getElementById('log');
+        const victory = document.getElementById('victory');
+        const startBtn = document.getElementById('start-btn');
+        const backBtn = document.getElementById('back-btn');
+        const refreshBtn = document.getElementById('refresh-btn');
+        const controlButtons = document.getElementById('control-buttons');
+
+        const bgMusic = document.getElementById('bg-music');
+        const correctSound = document.getElementById('correct-sound');
+        const thunderSound = document.getElementById('thunder-sound');
+        const awesomeChoice = document.getElementById('awesome-choice');
+        const rainSound = document.getElementById('rain-sound');
+        const sunnySound = document.getElementById('sunny-sound');
+
+        const rainContainer = document.getElementById('rain');
+        const butterfliesContainer = document.getElementById('butterflies');
+
+        const sun = document.getElementById('sunrays');
+
+        // New elements for the Monikat Chatbot
+        const monikatChatContainer = document.getElementById('monikat-chat-container');
+        const monikatChatLog = document.getElementById('monikat-chat-log');
+        const chatInput = document.getElementById('chat-input');
+        const sendButton = document.getElementById('send-button');
+
+        // Certificate elements
+        const certificateDiv = document.getElementById('certificate');
+        const finalScoreSpan = document.getElementById('final-score');
+        const totalQuestionsSpan = document.getElementById('total-questions');
+
+
+        let currentLevel = 0;
+        let score = 0;
+        let isRaining = false;
+        let chatHistory = []; // To store Monikat chat messages
+
+        // Levels with added new content
+        const levels = [
+            {
+                question: "Which is the best way to start with Oracle Cloud?",
+                answers: [
+                    { text: "Use Facebook Login", correct: false },
+                    { text: "Create an Oracle Cloud account", correct: true },
+                    { text: "Download Oracle NetBeans", correct: false },
+                    { text: "Use AWS instead", correct: false }
+                ],
+                hint: "You need an official Oracle account first."
+            },
+            {
+                question: "Why did Monica create 2 VMs in Oracle Cloud?",
+                answers: [
+                    { text: "First VM was too small to run everything", correct: true },
+                    { text: "Wanted a backup VM", correct: false },
+                    { text: "Just to experiment with multiple VMs", correct: false },
+                    { text: "Because of cost savings", correct: false }
+                ],
+                hint: "Capacity was the issue."
+            },
+            {
+                question: "What remote desktop tool did Monica install on her VMs?",
+                answers: [
+                    { text: "TigerVNC", correct: true },
+                    { text: "TeamViewer", correct: false },
+                    { text: "AnyDesk", correct: false },
+                    { text: "Remote Desktop Protocol (RDP)", correct: false }
+                ],
+                hint: "Starts with 'Tiger'."
+            },
+            {
+                question: "How did Monica handle opening ports in Oracle Cloud?",
+                answers: [
+                    { text: "Added specific ports for services", correct: true },
+                    { text: "Blocked all ports for security", correct: false },
+                    { text: "Left default ports open", correct: false },
+                    { text: "Didn't configure ports", correct: false }
+                ],
+                hint: "She customized port access."
+            },
+            {
+                question: "Which tools did Monica learn to install on her VMs?",
+                answers: [
+                    { text: "TigerVNC, Git, Java Learning", correct: true },
+                    { text: "Docker, Kubernetes", correct: false },
+                    { text: "Photoshop, Illustrator", correct: false },
+                    { text: "VMware, Hyper-V", correct: false }
+                ],
+                hint: "Includes version control and remote desktop."
+            },
+            {
+                question: "Monica learned to code Java. Which IDE is popular for Java development?",
+                answers: [
+                    { text: "NetBeans", correct: true },
+                    { text: "Visual Studio Code", correct: false },
+                    { text: "Sublime Text", correct: false },
+                    { text: "PyCharm", correct: false }
+                ],
+                hint: "Oracle owns this IDE."
+            },
+            {
+                question: "Let's try a simple Java demo! Type exactly: System.out.println(\"Hello, Oracle!\");",
+                demo: true, // This flag indicates a code demo question
+                hint: "Match capitalization, punctuation exactly.",
+                correctDemoInput: 'System.out.println("Hello, Oracle!");',
+                demoSuccessMsg: "Great job! You've run your first Java print statement!"
+            },
+            // New Levels related to Putty
+            {
+                question: "What is a common reason for a critical error after trying to log into Putty?",
+                answers: [
+                    { text: "Need an SSH private key", correct: true },
+                    { text: "Incorrect username", correct: false },
+                    { text: "Wrong IP address", correct: false }
+                ],
+                hint: "Think about SSH key authentication."
+            },
+            {
+                question: "Why might the private key not work in Putty?",
+                answers: [
+                    { text: "It's not configured correctly and needs proper extension", correct: true },
+                    { text: "The server is down", correct: false },
+                    { text: "The password is wrong", correct: false }
+                ],
+                hint: "Configuration and format are key."
+            },
+            {
+                question: "What is the proper extension for a Putty private key?",
+                answers: [
+                    { text: ".ppk", correct: true },
+                    { text: ".ocp", correct: false },
+                    { text: ".notta", correct: false },
+                    { text: ".tgif", correct: false }
+                ],
+                hint: "It's a specific format for Putty keys."
+            },
+            {
+                question: "Fun fact: What's the difference between Putty and TigerVNC?",
+                answers: [
+                    { text: "Putty is for SSH, TigerVNC is for remote desktop", correct: true },
+                    { text: "They are the same tool", correct: false },
+                    { text: "Putty is a browser plugin", correct: false },
+                    { text: "TigerVNC is for email", correct: false }
+                ],
+                hint: "They serve different remote access purposes."
+            },
+            {
+                question: "Create a simple Java calculator that adds two numbers. Enter your code, then input the numbers when prompted.",
+                demo: true,
+                hint: "First, write the full Java program as shown. Then, when prompted, enter two integers. The exact code needs to be provided below.",
+                correctDemoInput: `import java.util.Scanner;
+
+public class Calculator {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter first number:");
+        // In a real demo, you'd process input, but here we just check code.
+        // int a = sc.nextInt();
+        System.out.println("Enter second number:");
+        // int b = sc.nextInt();
+        System.out.println("Sum: "); // Simulating output after sum
+        sc.close();
+    }
+}`,
+                demoSuccessMsg: "Great! You've created a simple Java calculator! (Input processing is simulated for this demo)"
+            },
+            {
+                question: "Chat with Monikat: Ask her about Oracle Cloud, Java, or anything else about Monica's Quest!",
+                chat: true, // This flag indicates a chat level
+                hint: "Type your message and click Send. Ask 'What is Oracle Cloud?' or 'Tell me about Java'.",
+                chatDuration: 15000 // Chat for 15 seconds, then auto-advance
+            }
+        ];
+
+        // Sun animation functions
+        function sunFall() {
+            sun.classList.remove('sun-explode');
+            sun.classList.add('sun-fall');
+        }
+        function sunBlowUp() {
+            sun.classList.remove('sun-fall');
+            sun.classList.add('sun-explode');
+        }
+        function resetSun() {
+            sun.classList.remove('sun-fall', 'sun-explode');
+            sun.style.top = '70px';
+            sun.style.transform = '';
+            sun.style.opacity = '';
+        }
+
+        // Rain effect functions
+        function createRainDrops(numDrops = 50) {
+            rainContainer.innerHTML = '';
+            for (let i = 0; i < numDrops; i++) {
+                const drop = document.createElement('div');
+                drop.className = 'raindrop';
+                drop.style.left = Math.random() * 100 + 'vw';
+                drop.style.animationDuration = (0.7 + Math.random() * 0.8) + 's';
+                drop.style.animationDelay = (Math.random() * 5) + 's';
+                drop.style.opacity = (0.3 + Math.random() * 0.7).toFixed(2);
+                drop.style.width = (1 + Math.random() * 3) + 'px';
+                drop.style.height = (8 + Math.random() * 12) + 'px';
+                rainContainer.appendChild(drop);
+            }
+        }
+
+        function startRain() {
+            if (!isRaining) {
+                createRainDrops(80);
+                rainSound.volume = 0.15;
+                rainSound.play();
+                isRaining = true;
+                document.body.classList.add('rainy');
+                document.body.classList.remove('sunny');
+                sunnySound.pause();
+            }
+        }
+
+        function stopRain() {
+            if (isRaining) {
+                rainContainer.innerHTML = '';
+                rainSound.pause();
+                isRaining = false;
+                document.body.classList.remove('rainy');
+                document.body.classList.add('sunny');
+                sunnySound.volume = 0.15;
+                sunnySound.play();
+            }
+        }
+
+        // Butterflies creation
+        function createButterflies(num = 6) {
+            butterfliesContainer.innerHTML = '';
+            for (let i = 0; i < num; i++) {
+                const butterfly = document.createElement('div');
+                butterfly.className = 'butterfly';
+                butterfly.style.top = `${Math.random() * 70 + 10}vh`;
+                butterfly.style.left = `${Math.random() * 100}vw`;
+                butterfly.style.animationDelay = `${Math.random() * 12}s`;
+                butterfliesContainer.appendChild(butterfly);
+            }
+        }
+
+        createButterflies();
+
+        // Show level function
+        function showLevel() {
+            stopRain(); // Ensure no rain when a new level starts
+            document.getElementById('control-buttons').style.display = currentLevel === 0 ? 'none' : 'block';
+            log.innerHTML = ''; // Clear previous content
+            victory.classList.add('hidden');
+            certificateDiv.classList.add('hidden'); // Hide certificate if visible
+
+            if (currentLevel >= levels.length) {
+                endGame();
+                return;
+            }
+
+            const level = levels[currentLevel];
+
+            // Show 'Putty' bubble for the specific level
+            const puttyBubble = document.getElementById('puttyBubble');
+            if (level.question.includes('Putty') && !puttyBubble.dataset.shown) {
+                puttyBubble.style.display = 'block';
+                puttyBubble.dataset.shown = 'true';
+                setTimeout(() => { puttyBubble.style.display = 'none'; }, 3000);
+            } else if (!level.question.includes('Putty')) {
+                puttyBubble.style.display = 'none';
+            }
+
+            // Display question
+            const questionEl = document.createElement('h2');
+            questionEl.textContent = level.question;
+            log.appendChild(questionEl);
+
+            // Display hint
+            const hintEl = document.createElement('p');
+            hintEl.style.fontStyle = 'italic';
+            hintEl.style.color = '#666';
+            hintEl.textContent = 'Hint: ' + level.hint;
+            log.appendChild(hintEl);
+
+            // Handle Java Demo Levels
+            if (level.demo) {
+                const javaCodeBlock = document.createElement('div');
+                javaCodeBlock.className = 'java-code-display';
+                javaCodeBlock.innerHTML = `<pre><code>${level.correctDemoInput}</code></pre>`;
+                log.appendChild(javaCodeBlock);
+
+                const input = document.createElement('textarea');
+                input.style.fontSize = '1.1em';
+                input.style.width = 'calc(100% - 20px)';
+                input.style.minHeight = '100px';
+                input.style.marginTop = '15px';
+                input.style.padding = '10px';
+                input.style.borderRadius = '8px';
+                input.style.border = '1px solid #ccc';
+                input.placeholder = "Enter your code here...";
+                log.appendChild(input);
+
+                const submitBtn = document.createElement('button');
+                submitBtn.textContent = 'Run Code';
+                submitBtn.style.marginTop = '15px';
+                submitBtn.onclick = () => {
+                    // Normalize inputs for comparison (remove extra spaces/newlines)
+                    const normalizedInput = input.value.trim().replace(/\s+/g, ' ');
+                    const normalizedCorrectInput = level.correctDemoInput.trim().replace(/\s+/g, ' ');
+
+                    if (normalizedInput === normalizedCorrectInput) {
+                        logMessage('You: ' + input.value, 'user-message');
+                        logMessage('Monikat: ' + level.demoSuccessMsg);
+                        awesomeChoice.play();
+                        score++;
+                        stopRain(); // No rain if correct
+                        setTimeout(nextLevel, 2000);
+                    } else {
+                        logMessage('You: ' + input.value, 'user-message');
+                        logMessage('Monikat: Hmm, that code isn\'t quite right. Try again!');
+                        thunderSound.play();
+                        startRain(); // Rain on incorrect demo input
+                        // No score change, stay on level
+                    }
+                };
+                log.appendChild(submitBtn);
+
+                // Disable traditional options for demo levels
+                if (document.getElementById('options')) {
+                    document.getElementById('options').innerHTML = '';
+                }
+            } else if (level.chat) {
+                // Handle Chatbot Levels - Chatbot is always visible now, just manage the level flow
+                logMessage('Monikat: Hello! Ask me anything about Monica\'s quest, Oracle Cloud, or Java! I\'ll be here for a bit.', 'monikat');
+                logMessage('You can ask things like: "What is Oracle Cloud?" or "Tell me about Java."', 'monikat');
+
+                // Auto-advance after chatDuration
+                setTimeout(() => {
+                    if (currentLevel === levels.indexOf(level)) { // Check if still on this level
+                        logMessage('Monikat: Time\'s up for chat! Let\'s move on to the next challenge!', 'monikat');
+                        setTimeout(nextLevel, 2000);
+                    }
+                }, level.chatDuration);
+
+                // Disable traditional options for chat levels
+                if (document.getElementById('options')) {
+                    document.getElementById('options').innerHTML = '';
+                }
+            } else {
+                // Handle Standard Multiple Choice Levels
+                const optionsDiv = document.createElement('div');
+                optionsDiv.id = 'options';
+                level.answers.forEach(answer => {
+                    const button = document.createElement('button');
+                    button.textContent = answer.text;
+                    button.onclick = () => checkAnswer(answer, level);
+                    optionsDiv.appendChild(button);
+                });
+                log.appendChild(optionsDiv);
+            }
+        }
+
+        // Check Answer Function
+        function checkAnswer(selectedAnswer, level) {
+            // Disable all buttons to prevent multiple clicks
+            const buttons = document.querySelectorAll('#options button');
+            buttons.forEach(button => button.disabled = true);
+
+            if (selectedAnswer.correct) {
+                logMessage('Monikat: Excellent choice! That\'s correct!', 'monikat');
+                correctSound.play();
+                score++;
+                stopRain(); // Stop rain on correct answer
+                setTimeout(nextLevel, 1500);
+            } else {
+                logMessage('Monikat: Oops! Not quite right. Keep learning!', 'monikat');
+                thunderSound.play();
+                startRain(); // Start rain on incorrect answer
+                // No score increment for wrong answers
+                setTimeout(nextLevel, 1500); // Advance even on wrong answer, but with rain
+            }
+        }
+
+        // Log messages to the main game log
+        function logMessage(message, className = '') {
+            const p = document.createElement('p');
+            p.textContent = message;
+            if (className) {
+                p.classList.add(className);
+            }
+            log.appendChild(p);
+            log.scrollTop = log.scrollHeight; // Auto-scroll to bottom
+        }
+
+        // Chatbot specific logging
+        function logMonikatChatMessage(message, sender = 'Monikat') {
+            const p = document.createElement('p');
+            p.innerHTML = `<strong>${sender}:</strong> ${message}`;
+            if (sender !== 'Monikat') {
+                p.classList.add('user-message');
+            }
+            monikatChatLog.appendChild(p);
+            monikatChatLog.scrollTop = monikatChatLog.scrollHeight;
+        }
+
+        // Monikat Chatbot AI logic (simplified)
+        function getMonikatResponse(userMessage) {
+            const msg = userMessage.toLowerCase();
+            let response = "I'm still learning, but I understand a bit about Monica's quest and Oracle Cloud. Can you try asking me something specific?";
+
+            if (msg.includes("hello") || msg.includes("hi")) {
+                response = "Hi there! What would you like to know?";
+            } else if (msg.includes("oracle cloud") || msg.includes("what is oci")) {
+                response = "Oracle Cloud Infrastructure (OCI) is a suite of cloud computing services that runs on the Oracle Cloud Infrastructure platform. Monica used it to create her virtual machines!";
+            } else if (msg.includes("java")) {
+                response = "Java is a popular programming language, especially for enterprise applications. Monica is learning to code in Java on her cloud VMs!";
+            } else if (msg.includes("monica's quest") || msg.includes("quest")) {
+                response = "Monica's quest is all about learning cloud technologies, especially Oracle Cloud, and overcoming challenges like setting up VMs and coding!";
+            } else if (msg.includes("putty")) {
+                response = "Putty is a free and open-source terminal emulator, serial console and network file transfer application. It supports several network protocols, including SCP, SSH, Telnet, rlogin, and raw socket connection. It is commonly used for remote access to servers.";
+            } else if (msg.includes("tigervnc")) {
+                response = "TigerVNC is a high-performance, platform-neutral implementation of VNC (Virtual Network Computing). It allows you to control a graphical desktop remotely. Monica used it for her VMs!";
+            } else if (msg.includes("thank you") || msg.includes("thanks")) {
+                response = "You're welcome! Glad I could help.";
+            } else if (msg.includes("score")) {
+                response = `You currently have ${score} correct answers! Keep going!`;
+            }
+
+            // Store conversation history
+            chatHistory.push({ sender: 'You', message: userMessage });
+            chatHistory.push({ sender: 'Monikat', message: response });
+
+            logMonikatChatMessage(response, 'Monikat');
+        }
+
+        sendButton.addEventListener('click', () => {
+            const userMessage = chatInput.value.trim();
+            if (userMessage) {
+                logMonikatChatMessage(userMessage, 'You');
+                chatInput.value = '';
+                getMonikatResponse(userMessage);
+            }
+        });
+
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendButton.click();
+            }
+        });
+
+        // Navigation Functions
+        function nextLevel() {
+            currentLevel++;
+            showLevel();
+        }
+
+        function prevLevel() {
+            if (currentLevel > 0) {
+                currentLevel--;
+                showLevel();
+            }
+        }
+
+        function endGame() {
+            log.innerHTML = ''; // Clear game log
+            victory.classList.remove('hidden');
+            victory.innerHTML = `🌟 Congratulations! You've completed Monica's Cloud Quest! 🌟<br><br>
+                                 You answered ${score} out of ${levels.length} questions correctly.`;
+
+            // Show certificate
+            certificateDiv.classList.remove('hidden');
+            finalScoreSpan.textContent = score;
+            totalQuestionsSpan.textContent = levels.length;
+
+            startBtn.textContent = 'Play Again?';
+            startBtn.classList.remove('hidden');
+            controlButtons.style.display = 'none';
+            stopRain();
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+            sunBlowUp(); // Sun explodes on victory
+            setTimeout(resetSun, 2000); // Reset sun after explosion
+        }
+
+        function startGame() {
+            currentLevel = 0;
+            score = 0;
+            startBtn.classList.add('hidden');
+            victory.classList.add('hidden');
+            certificateDiv.classList.add('hidden'); // Hide certificate at start of new game
+            controlButtons.style.display = 'block';
+            resetSun(); // Reset sun for a new game
+            showLevel();
+            bgMusic.volume = 0.05; // Set background music volume
+            bgMusic.play();
+            sunnySound.volume = 0.15; // Set sunny sound volume
+            sunnySound.play();
+            // Ensure chat log is reset and initial Monikat message is shown
+            monikatChatLog.innerHTML = '<p><strong>Monikat:</strong> Welcome to Monica\'s Cloud Quest! Ask me anything about Oracle Cloud, Java, or the game! Try typing \'hello\'.</p>';
+        }
+
+        // Event Listeners
+        startBtn.addEventListener('click', startGame);
+        backBtn.addEventListener('click', prevLevel);
+        refreshBtn.addEventListener('click', startGame); // Restart button functionality
+    </script>
+</body>
+</html>
