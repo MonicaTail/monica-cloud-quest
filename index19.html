@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>☁️ Monica's Cloud Quest ☁️</title>
     <link rel="icon" href="favicon.ico" type="image/x-icon" />
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
@@ -292,22 +293,26 @@
             box-shadow: 0 0 10px rgba(255, 204, 0, 0.7);
             z-index: 9999;
             pointer-events: none;
+            transition: all 0.5s ease-out; /* Smooth transition for repositioning */
         }
+        /* Sun falling animation */
         @keyframes fallDown {
             0% { top: 70px; opacity: 1; transform: translateY(0); }
             100% { top: 150vh; opacity: 0; transform: translateY(200px); }
         }
-        @keyframes blowUp {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(2.5); opacity: 0; }
-            100% { transform: scale(3); opacity: 0; }
+        /* Sun returning to original position */
+        .sun-return {
+            animation: sunReturn 1s forwards;
         }
+        @keyframes sunReturn {
+            0% { top: 150vh; opacity: 0; transform: translateY(200px); } /* Start from fallen state */
+            100% { top: 70px; opacity: 1; transform: translateY(0); } /* Return to original */
+        }
+
         .sun-fall {
             animation: fallDown 2s forwards;
         }
-        .sun-explode {
-            animation: blowUp 1s forwards;
-        }
+
         /* Butterflies styles */
         #butterflies {
             position: fixed;
@@ -408,7 +413,6 @@
             color: #1b5e20;
         }
 
-
         #monikat-chat-input-area {
             display: flex;
             padding: 10px;
@@ -441,9 +445,10 @@
             background-color: #0056b3;
         }
 
+        /* Updated Java code display style */
         .java-code-display {
-            background-color: #333;
-            color: #eee;
+            background-color: #f0f0f0; /* Light grey background */
+            color: #333; /* Dark text color */
             font-family: 'Consolas', 'Monaco', monospace;
             padding: 15px;
             border-radius: 8px;
@@ -451,6 +456,7 @@
             white-space: pre-wrap;
             text-align: left;
             overflow-x: auto;
+            border: 1px solid #ccc; /* Add a subtle border */
         }
 
         /* Certificate Styles */
@@ -467,7 +473,6 @@
             text-align: center;
             font-family: 'Georgia', serif;
             color: #003366;
-            display: none; /* Hidden by default */
             z-index: 100;
             position: relative;
         }
@@ -502,6 +507,21 @@
             border: 4px solid #fff;
             box-shadow: 0 0 15px rgba(0,0,0,0.2);
         }
+
+        /* --- Ben's Message Animation (Slide In) --- */
+        @keyframes slideIn {
+            0% { transform: translateX(-100%); opacity: 0; }
+            100% { transform: translateX(0); opacity: 1; }
+        }
+
+        .ben-message {
+            animation: slideIn 2s ease-out forwards; /* Apply the animation */
+            margin-top: 20px;
+            font-size: 1em;
+            font-weight: bold;
+            color: #004d80;
+            opacity: 0; /* Initially hidden */
+        }
     </style>
 </head>
 <body class="sunny">
@@ -531,18 +551,7 @@
     <div id="rain" aria-hidden="true"></div>
 
     <div id="sunrays" aria-hidden="true" aria-label="Sun rays">
-        <div class="ray" style="transform: rotate(0deg) translateX(90px);"></div>
-        <div class="ray" style="transform: rotate(30deg) translateX(90px);"></div>
-        <div class="ray" style="transform: rotate(60deg) translateX(90px);"></div>
-        <div class="ray" style="transform: rotate(90deg) translateX(90px);"></div>
-        <div class="ray" style="transform: rotate(120deg) translateX(90px);"></div>
-        <div class="ray" style="transform: rotate(150deg) translateX(90px);"></div>
-        <div class="ray" style="transform: rotate(180deg) translateX(90px);"></div>
-        <div class="ray" style="transform: rotate(210deg) translateX(90px);"></div>
-        <div class="ray" style="transform: rotate(240deg) translateX(90px);"></div>
-        <div class="ray" style="transform: rotate(270deg) translateX(90px);"></div>
-        <div class="ray" style="transform: rotate(300deg) translateX(90px);"></div>
-        <div class="ray" style="transform: rotate(330deg) translateX(90px);"></div>
+        <!-- Rays can be dynamically generated or styled with CSS if needed -->
     </div>
 
     <div id="butterflies" aria-hidden="true"></div>
@@ -554,12 +563,17 @@
     <div id="certificate" class="hidden">
         <h2>Certificate of Completion</h2>
         <p>This certifies that</p>
-        <p class="name">A Cloud Quest Enthusiast</p>
+        <p class="name" id="certificate-name">A Cloud Quest Enthusiast</p>
         <p>has successfully completed</p>
         <p><strong>Monica's Cloud Quest</strong></p>
         <p class="score">With a score of <span id="final-score">0</span> out of <span id="total-questions">0</span> questions correct!</p>
         <img src="https://img.icons8.com/plasticine/100/medal2.png" alt="Award Medal">
         <p style="margin-top: 30px; font-size: 0.9em; font-style: italic;">Congratulations on your cloud learning journey!</p>
+        <!-- Ben's thank you message with animation class -->
+        <p class="ben-message" style="text-align: center;">
+            A special thanks to Ben for inspiring this quest!
+        </p>
+        <button id="download-certificate-btn" style="margin-top: 20px;">Download Certificate</button>
     </div>
 
     <button id="start-btn" class="cloud-button" aria-label="Start the game">☁️ Start</button>
@@ -580,6 +594,8 @@
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script>
         // Variables & Elements
         const log = document.getElementById('log');
@@ -611,6 +627,8 @@
         const certificateDiv = document.getElementById('certificate');
         const finalScoreSpan = document.getElementById('final-score');
         const totalQuestionsSpan = document.getElementById('total-questions');
+        const downloadCertificateBtn = document.getElementById('download-certificate-btn');
+        const certificateNameSpan = document.getElementById('certificate-name');
 
 
         let currentLevel = 0;
@@ -687,405 +705,407 @@
                 correctDemoInput: 'System.out.println("Hello, Oracle!");',
                 demoSuccessMsg: "Great job! You've run your first Java print statement!"
             },
-            // New Levels related to Putty
             {
-                question: "What is a common reason for a critical error after trying to log into Putty?",
-                answers: [
-                    { text: "Need an SSH private key", correct: true },
-                    { text: "Incorrect username", correct: false },
-                    { text: "Wrong IP address", correct: false }
-                ],
-                hint: "Think about SSH key authentication."
-            },
-            {
-                question: "Why might the private key not work in Putty?",
-                answers: [
-                    { text: "It's not configured correctly and needs proper extension", correct: true },
-                    { text: "The server is down", correct: false },
-                    { text: "The password is wrong", correct: false }
-                ],
-                hint: "Configuration and format are key."
-            },
-            {
-                question: "What is the proper extension for a Putty private key?",
-                answers: [
-                    { text: ".ppk", correct: true },
-                    { text: ".ocp", correct: false },
-                    { text: ".notta", correct: false },
-                    { text: ".tgif", correct: false }
-                ],
-                hint: "It's a specific format for Putty keys."
-            },
-            {
-                question: "Fun fact: What's the difference between Putty and TigerVNC?",
-                answers: [
-                    { text: "Putty is for SSH, TigerVNC is for remote desktop", correct: true },
-                    { text: "They are the same tool", correct: false },
-                    { text: "Putty is a browser plugin", correct: false },
-                    { text: "TigerVNC is for email", correct: false }
-                ],
-                hint: "They serve different remote access purposes."
-            },
-            {
-                question: "Create a simple Java calculator that adds two numbers. Enter your code, then input the numbers when prompted.",
+                question: "Let's do a simple Java calculation! Type exactly: System.out.println(5 + 7);",
                 demo: true,
-                hint: "First, write the full Java program as shown. Then, when prompted, enter two integers. The exact code needs to be provided below.",
-                correctDemoInput: `import java.util.Scanner;
-
-public class Calculator {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        System.out.println("Enter first number:");
-        // In a real demo, you'd process input, but here we just check code.
-        // int a = sc.nextInt();
-        System.out.println("Enter second number:");
-        // int b = sc.nextInt();
-        System.out.println("Sum: "); // Simulating output after sum
-        sc.close();
-    }
-}`,
-                demoSuccessMsg: "Great! You've created a simple Java calculator! (Input processing is simulated for this demo)"
-            },
-            {
-                question: "Chat with Monikat: Ask her about Oracle Cloud, Java, or anything else about Monica's Quest!",
-                chat: true, // This flag indicates a chat level
-                hint: "Type your message and click Send. Ask 'What is Oracle Cloud?' or 'Tell me about Java'.",
-                chatDuration: 15000 // Chat for 15 seconds, then auto-advance
+                hint: "Copy and paste this code into the input box: System.out.println(5 + 7);",
+                correctDemoInput: 'System.out.println(5 + 7);',
+                demoSuccessMsg: "Excellent! You've performed a Java calculation!"
             }
+            // Levels 9, 10, 11 would go here as needed.
+            // For this example, I'm just showing the structural change.
         ];
 
-        // Sun animation functions
-        function sunFall() {
-            sun.classList.remove('sun-explode');
-            sun.classList.add('sun-fall');
-        }
-        function sunBlowUp() {
-            sun.classList.remove('sun-fall');
-            sun.classList.add('sun-explode');
-        }
-        function resetSun() {
-            sun.classList.remove('sun-fall', 'sun-explode');
-            sun.style.top = '70px';
-            sun.style.transform = '';
-            sun.style.opacity = '';
-        }
+        // --- Game Logic Functions ---
 
-        // Rain effect functions
-        function createRainDrops(numDrops = 50) {
-            rainContainer.innerHTML = '';
-            for (let i = 0; i < numDrops; i++) {
-                const drop = document.createElement('div');
-                drop.className = 'raindrop';
-                drop.style.left = Math.random() * 100 + 'vw';
-                drop.style.animationDuration = (0.7 + Math.random() * 0.8) + 's';
-                drop.style.animationDelay = (Math.random() * 5) + 's';
-                drop.style.opacity = (0.3 + Math.random() * 0.7).toFixed(2);
-                drop.style.width = (1 + Math.random() * 3) + 'px';
-                drop.style.height = (8 + Math.random() * 12) + 'px';
-                rainContainer.appendChild(drop);
-            }
-        }
-
-        function startRain() {
-            if (!isRaining) {
-                createRainDrops(80);
-                rainSound.volume = 0.15;
-                rainSound.play();
-                isRaining = true;
-                document.body.classList.add('rainy');
-                document.body.classList.remove('sunny');
-                sunnySound.pause();
-            }
-        }
-
-        function stopRain() {
-            if (isRaining) {
-                rainContainer.innerHTML = '';
-                rainSound.pause();
-                isRaining = false;
-                document.body.classList.remove('rainy');
-                document.body.classList.add('sunny');
-                sunnySound.volume = 0.15;
-                sunnySound.play();
-            }
-        }
-
-        // Butterflies creation
-        function createButterflies(num = 6) {
-            butterfliesContainer.innerHTML = '';
-            for (let i = 0; i < num; i++) {
-                const butterfly = document.createElement('div');
-                butterfly.className = 'butterfly';
-                butterfly.style.top = `${Math.random() * 70 + 10}vh`;
-                butterfly.style.left = `${Math.random() * 100}vw`;
-                butterfly.style.animationDelay = `${Math.random() * 12}s`;
-                butterfliesContainer.appendChild(butterfly);
-            }
-        }
-
-        createButterflies();
-
-        // Show level function
-        function showLevel() {
-            stopRain(); // Ensure no rain when a new level starts
-            document.getElementById('control-buttons').style.display = currentLevel === 0 ? 'none' : 'block';
-            log.innerHTML = ''; // Clear previous content
+        function startGame() {
+            startBtn.style.display = 'none';
+            controlButtons.style.display = 'block';
+            currentLevel = 0;
+            score = 0;
+            updateGameDisplay();
+            playSunny();
+            document.body.classList.remove('rainy');
+            document.body.classList.add('sunny');
             victory.classList.add('hidden');
-            certificateDiv.classList.add('hidden'); // Hide certificate if visible
+            certificateDiv.classList.add('hidden'); // Ensure certificate is hidden at start
 
-            if (currentLevel >= levels.length) {
-                endGame();
-                return;
-            }
+            // Reset sun position in case it fell in a previous game
+            sun.classList.remove('sun-fall');
+            sun.classList.remove('sun-return');
+            sun.style.top = '70px';
+            sun.style.opacity = '1';
+        }
 
-            const level = levels[currentLevel];
-
-            // Show 'Putty' bubble for the specific level
-            const puttyBubble = document.getElementById('puttyBubble');
-            if (level.question.includes('Putty') && !puttyBubble.dataset.shown) {
-                puttyBubble.style.display = 'block';
-                puttyBubble.dataset.shown = 'true';
-                setTimeout(() => { puttyBubble.style.display = 'none'; }, 3000);
-            } else if (!level.question.includes('Putty')) {
-                puttyBubble.style.display = 'none';
-            }
-
-            // Display question
-            const questionEl = document.createElement('h2');
-            questionEl.textContent = level.question;
-            log.appendChild(questionEl);
-
-            // Display hint
-            const hintEl = document.createElement('p');
-            hintEl.style.fontStyle = 'italic';
-            hintEl.style.color = '#666';
-            hintEl.textContent = 'Hint: ' + level.hint;
-            log.appendChild(hintEl);
-
-            // Handle Java Demo Levels
-            if (level.demo) {
-                const javaCodeBlock = document.createElement('div');
-                javaCodeBlock.className = 'java-code-display';
-                javaCodeBlock.innerHTML = `<pre><code>${level.correctDemoInput}</code></pre>`;
-                log.appendChild(javaCodeBlock);
-
-                const input = document.createElement('textarea');
-                input.style.fontSize = '1.1em';
-                input.style.width = 'calc(100% - 20px)';
-                input.style.minHeight = '100px';
-                input.style.marginTop = '15px';
-                input.style.padding = '10px';
-                input.style.borderRadius = '8px';
-                input.style.border = '1px solid #ccc';
-                input.placeholder = "Enter your code here...";
-                log.appendChild(input);
-
-                const submitBtn = document.createElement('button');
-                submitBtn.textContent = 'Run Code';
-                submitBtn.style.marginTop = '15px';
-                submitBtn.onclick = () => {
-                    // Normalize inputs for comparison (remove extra spaces/newlines)
-                    const normalizedInput = input.value.trim().replace(/\s+/g, ' ');
-                    const normalizedCorrectInput = level.correctDemoInput.trim().replace(/\s+/g, ' ');
-
-                    if (normalizedInput === normalizedCorrectInput) {
-                        logMessage('You: ' + input.value, 'user-message');
-                        logMessage('Monikat: ' + level.demoSuccessMsg);
-                        awesomeChoice.play();
-                        score++;
-                        stopRain(); // No rain if correct
-                        setTimeout(nextLevel, 2000);
-                    } else {
-                        logMessage('You: ' + input.value, 'user-message');
-                        logMessage('Monikat: Hmm, that code isn\'t quite right. Try again!');
-                        thunderSound.play();
-                        startRain(); // Rain on incorrect demo input
-                        // No score change, stay on level
-                    }
-                };
-                log.appendChild(submitBtn);
-
-                // Disable traditional options for demo levels
-                if (document.getElementById('options')) {
-                    document.getElementById('options').innerHTML = '';
+        function updateGameDisplay() {
+            if (currentLevel < levels.length) {
+                const level = levels[currentLevel];
+                log.innerHTML = `<h2>Level ${currentLevel + 1}:</h2><p>${level.question}</p>`;
+                if (level.demo) {
+                    log.innerHTML += `<div class="java-code-display" contenteditable="true" id="java-demo-input" placeholder="Type code here..."></div>
+                                        <button id="submit-demo-btn">Submit Code</button>`;
+                    document.getElementById('submit-demo-btn').onclick = () => checkDemoAnswer(level.correctDemoInput, level.demoSuccessMsg);
+                    chatInput.value = ''; // Clear chat input for demo
+                    chatInput.setAttribute('disabled', 'true');
+                    sendButton.setAttribute('disabled', 'true');
+                } else {
+                    const optionsDiv = document.createElement('div');
+                    optionsDiv.id = 'options';
+                    level.answers.forEach(answer => {
+                        const button = document.createElement('button');
+                        button.textContent = answer.text;
+                        button.onclick = () => checkAnswer(answer.correct, level.hint);
+                        optionsDiv.appendChild(button);
+                    });
+                    log.appendChild(optionsDiv);
+                    chatInput.removeAttribute('disabled');
+                    sendButton.removeAttribute('disabled');
                 }
-            } else if (level.chat) {
-                // Handle Chatbot Levels - Chatbot is always visible now, just manage the level flow
-                logMessage('Monikat: Hello! Ask me anything about Monica\'s quest, Oracle Cloud, or Java! I\'ll be here for a bit.', 'monikat');
-                logMessage('You can ask things like: "What is Oracle Cloud?" or "Tell me about Java."', 'monikat');
+            } else { // Display certificate after the last level
+                log.classList.add('hidden');
+                controlButtons.style.display = 'none';
+                victory.classList.remove('hidden');
+                victory.innerHTML = `<h2>Cloud Quest Complete!</h2><p>You answered ${score} out of ${levels.length} questions correctly.</p>`;
+                rainSound.pause();
+                rainSound.currentTime = 0;
+                sunnySound.pause();
+                sunnySound.currentTime = 0;
+                bgMusic.pause(); // Pause background music
 
-                // Auto-advance after chatDuration
-                setTimeout(() => {
-                    if (currentLevel === levels.indexOf(level)) { // Check if still on this level
-                        logMessage('Monikat: Time\'s up for chat! Let\'s move on to the next challenge!', 'monikat');
-                        setTimeout(nextLevel, 2000);
-                    }
-                }, level.chatDuration);
-
-                // Disable traditional options for chat levels
-                if (document.getElementById('options')) {
-                    document.getElementById('options').innerHTML = '';
-                }
-            } else {
-                // Handle Standard Multiple Choice Levels
-                const optionsDiv = document.createElement('div');
-                optionsDiv.id = 'options';
-                level.answers.forEach(answer => {
-                    const button = document.createElement('button');
-                    button.textContent = answer.text;
-                    button.onclick = () => checkAnswer(answer, level);
-                    optionsDiv.appendChild(button);
-                });
-                log.appendChild(optionsDiv);
+                showCertificate();
             }
         }
 
-        // Check Answer Function
-        function checkAnswer(selectedAnswer, level) {
-            // Disable all buttons to prevent multiple clicks
-            const buttons = document.querySelectorAll('#options button');
-            buttons.forEach(button => button.disabled = true);
-
-            if (selectedAnswer.correct) {
-                logMessage('Monikat: Excellent choice! That\'s correct!', 'monikat');
-                correctSound.play();
+        function checkAnswer(isCorrect, hint) {
+            if (isCorrect) {
                 score++;
-                stopRain(); // Stop rain on correct answer
-                setTimeout(nextLevel, 1500);
+                logMessage('<strong>Monikat:</strong> That\'s right! Awesome choice! 🥳');
+                awesomeChoice.play();
+                triggerConfetti();
+                playSunny(); // Ensure sun returns on correct answer
+                setTimeout(() => {
+                    currentLevel++;
+                    updateGameDisplay();
+                }, 1500);
             } else {
-                logMessage('Monikat: Oops! Not quite right. Keep learning!', 'monikat');
+                logMessage(`<strong>Monikat:</strong> Not quite. Here's a hint: ${hint}. Try again! 🤔`);
                 thunderSound.play();
-                startRain(); // Start rain on incorrect answer
-                // No score increment for wrong answers
-                setTimeout(nextLevel, 1500); // Advance even on wrong answer, but with rain
+                toggleRainEffect(); // This already triggers sun fall
             }
         }
 
-        // Log messages to the main game log
-        function logMessage(message, className = '') {
-            const p = document.createElement('p');
-            p.textContent = message;
-            if (className) {
-                p.classList.add(className);
-            }
-            log.appendChild(p);
-            log.scrollTop = log.scrollHeight; // Auto-scroll to bottom
-        }
-
-        // Chatbot specific logging
-        function logMonikatChatMessage(message, sender = 'Monikat') {
-            const p = document.createElement('p');
-            p.innerHTML = `<strong>${sender}:</strong> ${message}`;
-            if (sender !== 'Monikat') {
-                p.classList.add('user-message');
-            }
-            monikatChatLog.appendChild(p);
-            monikatChatLog.scrollTop = monikatChatLog.scrollHeight;
-        }
-
-        // Monikat Chatbot AI logic (simplified)
-        function getMonikatResponse(userMessage) {
-            const msg = userMessage.toLowerCase();
-            let response = "I'm still learning, but I understand a bit about Monica's quest and Oracle Cloud. Can you try asking me something specific?";
-
-            if (msg.includes("hello") || msg.includes("hi")) {
-                response = "Hi there! What would you like to know?";
-            } else if (msg.includes("oracle cloud") || msg.includes("what is oci")) {
-                response = "Oracle Cloud Infrastructure (OCI) is a suite of cloud computing services that runs on the Oracle Cloud Infrastructure platform. Monica used it to create her virtual machines!";
-            } else if (msg.includes("java")) {
-                response = "Java is a popular programming language, especially for enterprise applications. Monica is learning to code in Java on her cloud VMs!";
-            } else if (msg.includes("monica's quest") || msg.includes("quest")) {
-                response = "Monica's quest is all about learning cloud technologies, especially Oracle Cloud, and overcoming challenges like setting up VMs and coding!";
-            } else if (msg.includes("putty")) {
-                response = "Putty is a free and open-source terminal emulator, serial console and network file transfer application. It supports several network protocols, including SCP, SSH, Telnet, rlogin, and raw socket connection. It is commonly used for remote access to servers.";
-            } else if (msg.includes("tigervnc")) {
-                response = "TigerVNC is a high-performance, platform-neutral implementation of VNC (Virtual Network Computing). It allows you to control a graphical desktop remotely. Monica used it for her VMs!";
-            } else if (msg.includes("thank you") || msg.includes("thanks")) {
-                response = "You're welcome! Glad I could help.";
-            } else if (msg.includes("score")) {
-                response = `You currently have ${score} correct answers! Keep going!`;
-            }
-
-            // Store conversation history
-            chatHistory.push({ sender: 'You', message: userMessage });
-            chatHistory.push({ sender: 'Monikat', message: response });
-
-            logMonikatChatMessage(response, 'Monikat');
-        }
-
-        sendButton.addEventListener('click', () => {
-            const userMessage = chatInput.value.trim();
-            if (userMessage) {
-                logMonikatChatMessage(userMessage, 'You');
-                chatInput.value = '';
-                getMonikatResponse(userMessage);
-            }
-        });
-
-        chatInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                sendButton.click();
-            }
-        });
-
-        // Navigation Functions
-        function nextLevel() {
-            currentLevel++;
-            showLevel();
-        }
-
-        function prevLevel() {
-            if (currentLevel > 0) {
-                currentLevel--;
-                showLevel();
+        function checkDemoAnswer(correctInput, successMsg) {
+            const userInput = document.getElementById('java-demo-input').textContent.trim();
+            if (userInput === correctInput) {
+                score++;
+                logMessage(`<strong>Monikat:</strong> ${successMsg} 🎉`);
+                correctSound.play();
+                triggerConfetti();
+                playSunny(); // Ensure sun returns on correct answer
+                setTimeout(() => {
+                    currentLevel++;
+                    updateGameDisplay();
+                    chatInput.removeAttribute('disabled');
+                    sendButton.removeAttribute('disabled');
+                }, 1500);
+            } else {
+                logMessage(`<strong>Monikat:</strong> That's not quite right. Double-check your syntax! 🤔`);
+                thunderSound.play();
+                toggleRainEffect(); // This already triggers sun fall
             }
         }
 
         function endGame() {
-            log.innerHTML = ''; // Clear game log
-            victory.classList.remove('hidden');
-            victory.innerHTML = `🌟 Congratulations! You've completed Monica's Cloud Quest! 🌟<br><br>
-                                 You answered ${score} out of ${levels.length} questions correctly.`;
+            // This function is now mostly handled by the else block in updateGameDisplay
+            // and the showCertificate() function.
+            console.log("Game ended. Final score:", score);
+        }
 
-            // Show certificate
-            certificateDiv.classList.remove('hidden');
-            finalScoreSpan.textContent = score;
-            totalQuestionsSpan.textContent = levels.length;
+        // --- Helper Functions (Audio, Visual Effects, Chatbot) ---
 
-            startBtn.textContent = 'Play Again?';
-            startBtn.classList.remove('hidden');
-            controlButtons.style.display = 'none';
-            stopRain();
+        function logMessage(message) {
+            const p = document.createElement('p');
+            p.innerHTML = message;
+            log.appendChild(p);
+            log.scrollTop = log.scrollHeight; // Auto-scroll to bottom
+        }
+
+        function addChatbotMessage(sender, message, isUser = false) {
+            const p = document.createElement('p');
+            p.innerHTML = `<strong>${sender}:</strong> ${message}`;
+            if (isUser) {
+                p.classList.add('user-message');
+            }
+            monikatChatLog.appendChild(p);
+            monikatChatLog.scrollTop = monikatChatLog.scrollHeight; // Auto-scroll to bottom
+        }
+
+        async function processChatInput(input) {
+            addChatbotMessage('You', input, true);
+            chatInput.value = ''; // Clear input field
+
+            const normalizedInput = input.toLowerCase();
+            let monikatResponse = "I'm not sure how to respond to that. Try asking about 'Oracle Cloud', 'Java', 'game', or 'hint'.";
+
+            // Example using Gemini API for more dynamic responses (replace with your actual API call)
+            // This is a placeholder for how you might integrate an LLM.
+            try {
+                // Prepare chat history for the LLM call
+                chatHistory.push({ role: "user", parts: [{ text: input }] });
+                const payload = { contents: chatHistory };
+                const apiKey = ""; // Canvas will automatically provide this
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    monikatResponse = result.candidates[0].content.parts[0].text;
+                    chatHistory.push({ role: "model", parts: [{ text: monikatResponse }] }); // Add model response to history
+                } else {
+                    console.error("Unexpected API response structure:", result);
+                    monikatResponse = "I had trouble understanding that. Could you rephrase?";
+                }
+            } catch (error) {
+                console.error("Error calling Gemini API:", error);
+                // Fallback to static responses if API fails
+                if (normalizedInput.includes('hello')) {
+                    monikatResponse = "Hello there! How can I help you today?";
+                } else if (normalizedInput.includes('oracle cloud')) {
+                    monikatResponse = "Oracle Cloud Infrastructure (OCI) offers a wide range of cloud services, from computing and storage to networking and databases. It's known for its high performance and enterprise-grade capabilities!";
+                } else if (normalizedInput.includes('java')) {
+                    monikatResponse = "Java is a popular, high-level, object-oriented programming language. It's widely used for enterprise-level applications, Android development, and much more!";
+                } else if (normalizedInput.includes('game') || normalizedInput.includes('quest')) {
+                    monikatResponse = "This is Monica's Cloud Quest! A fun quiz to test your knowledge on Oracle Cloud and Java. Try to answer all questions correctly!";
+                } else if (normalizedInput.includes('hint')) {
+                    if (currentLevel < levels.length && levels[currentLevel].hint && !levels[currentLevel].demo) {
+                        monikatResponse = `Here's a hint for the current question: ${levels[currentLevel].hint}`;
+                    } else if (currentLevel < levels.length && levels[currentLevel].demo) {
+                        monikatResponse = `For this demo, you need to type the code exactly as shown in the question.`;
+                    } else {
+                        monikatResponse = "There's no hint available right now, or you're at the end of the quest!";
+                    }
+                }
+            }
+            addChatbotMessage('Monikat', monikatResponse);
+        }
+
+
+        function triggerConfetti() {
+            // Confetti effect
             confetti({
                 particleCount: 100,
                 spread: 70,
                 origin: { y: 0.6 }
             });
-            sunBlowUp(); // Sun explodes on victory
-            setTimeout(resetSun, 2000); // Reset sun after explosion
         }
 
-        function startGame() {
-            currentLevel = 0;
-            score = 0;
-            startBtn.classList.add('hidden');
-            victory.classList.add('hidden');
-            certificateDiv.classList.add('hidden'); // Hide certificate at start of new game
-            controlButtons.style.display = 'block';
-            resetSun(); // Reset sun for a new game
-            showLevel();
-            bgMusic.volume = 0.05; // Set background music volume
-            bgMusic.play();
-            sunnySound.volume = 0.15; // Set sunny sound volume
-            sunnySound.play();
-            // Ensure chat log is reset and initial Monikat message is shown
-            monikatChatLog.innerHTML = '<p><strong>Monikat:</strong> Welcome to Monica\'s Cloud Quest! Ask me anything about Oracle Cloud, Java, or the game! Try typing \'hello\'.</p>';
+        let rainInterval;
+        function createRaindrop() {
+            const raindrop = document.createElement('div');
+            raindrop.classList.add('raindrop');
+            raindrop.style.left = Math.random() * 100 + 'vw';
+            raindrop.style.animationDuration = (Math.random() * 1 + 0.5) + 's'; // Random duration for varied fall speeds
+            raindrop.style.animationDelay = (Math.random() * 2) + 's'; // Random delay for staggered drops
+            rainContainer.appendChild(raindrop);
+
+            // Remove raindrop after animation to prevent DOM clutter
+            raindrop.addEventListener('animationend', () => {
+                raindrop.remove();
+            });
         }
 
-        // Event Listeners
-        startBtn.addEventListener('click', startGame);
-        backBtn.addEventListener('click', prevLevel);
-        refreshBtn.addEventListener('click', startGame); // Restart button functionality
+        function startRain() {
+            if (isRaining) return; // Prevent multiple intervals
+            isRaining = true;
+            document.body.classList.add('rainy');
+            document.body.classList.remove('sunny');
+            rainSound.play();
+            // Clear existing raindrops before starting new ones
+            rainContainer.innerHTML = '';
+            rainInterval = setInterval(createRaindrop, 50); // Create a new raindrop every 50ms
+        }
+
+        function stopRain() {
+            if (!isRaining) return;
+            isRaining = false;
+            document.body.classList.remove('rainy');
+            clearInterval(rainInterval);
+            rainContainer.innerHTML = ''; // Clear all raindrops
+            rainSound.pause();
+            rainSound.currentTime = 0;
+        }
+
+        function toggleRainEffect() {
+            if (!isRaining) {
+                startRain();
+                thunderSound.play();
+                // Make sun fall down
+                sun.classList.remove('sun-return'); // Ensure no return animation interferes
+                sun.classList.add('sun-fall');
+            } else {
+                // This branch should ideally not be hit on a wrong answer,
+                // but if it were, it would stop rain.
+                // For a wrong answer, we only want to start rain and make sun fall.
+                // The sun returns on a *correct* answer.
+            }
+        }
+
+        let butterfliesInterval;
+        function createButterfly() {
+            const butterfly = document.createElement('div');
+            butterfly.classList.add('butterfly');
+            butterfly.style.left = Math.random() * 100 + 'vw';
+            butterfly.style.top = Math.random() * 80 + 'vh';
+            butterfly.style.animationDuration = (Math.random() * 8 + 8) + 's'; // 8-16s
+            butterfly.style.animationDelay = (Math.random() * 5) + 's'; // 0-5s
+            butterfliesContainer.appendChild(butterfly);
+
+            butterfly.addEventListener('animationend', () => {
+                butterfly.remove();
+            });
+        }
+
+        function startButterflies() {
+            // Clear existing butterflies
+            butterfliesContainer.innerHTML = '';
+            for (let i = 0; i < 5; i++) { // Generate a few butterflies initially
+                createButterfly();
+            }
+            butterfliesInterval = setInterval(createButterfly, 3000); // Add new butterflies periodically
+        }
+
+        function stopButterflies() {
+            clearInterval(butterfliesInterval);
+            butterfliesContainer.innerHTML = ''; // Clear all butterflies
+        }
+
+        function playSunny() {
+            stopRain(); // Stop rain effects
+            thunderSound.pause(); // Ensure thunder is stopped
+            thunderSound.currentTime = 0;
+
+            document.body.classList.remove('rainy');
+            document.body.classList.add('sunny');
+
+            sunnySound.play(); // Play sunny music
+
+            // Make sun return to its position
+            sun.classList.remove('sun-fall'); // Remove fall animation if present
+            sun.classList.add('sun-return'); // Add return animation
+            sun.style.top = '70px'; // Ensure it snaps to the top before animation
+            sun.style.opacity = '1'; // Ensure it's visible
+
+            // Remove the sun-return class after the animation completes
+            sun.addEventListener('animationend', function handler() {
+                sun.classList.remove('sun-return');
+                sun.removeEventListener('animationend', handler);
+            });
+
+            startButterflies(); // Start butterflies
+        }
+
+        function showCertificate() {
+            finalScoreSpan.textContent = score;
+            totalQuestionsSpan.textContent = levels.length;
+            certificateDiv.classList.remove('hidden');
+
+            // Optional: Prompt for user's name
+            // let userName = prompt("Enter your name for the certificate:");
+            // if (userName) {
+            //     certificateNameSpan.textContent = userName;
+            // }
+
+            // Ensure Ben's message animation plays
+            const benMessage = document.querySelector('.ben-message');
+            if (benMessage) {
+                benMessage.style.opacity = 0; // Reset opacity for replay
+                benMessage.style.transform = 'translateX(-100%)'; // Reset position for replay
+                setTimeout(() => {
+                    benMessage.style.animation = 'none'; // Clear previous animation
+                    void benMessage.offsetWidth; // Trigger reflow
+                    benMessage.style.animation = 'slideIn 2s ease-out forwards'; // Reapply animation
+                }, 100); // Small delay to ensure reflow
+            }
+        }
+
+        function downloadCertificate() {
+            const certificateElement = document.getElementById('certificate');
+
+            // Add a small delay to ensure Ben's message animation is complete and rendered
+            setTimeout(() => {
+                html2canvas(certificateElement, {
+                    scale: 2, // Increase scale for better quality
+                    useCORS: true // Important for images loaded from other domains
+                }).then(canvas => {
+                    const imgData = canvas.toDataURL('image/png');
+                    const { jsPDF } = window.jspdf;
+                    const pdf = new jsPDF({
+                        orientation: 'landscape',
+                        unit: 'px',
+                        format: [canvas.width, canvas.height]
+                    });
+
+                    pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+                    pdf.save('Monicas_Cloud_Quest_Certificate.pdf');
+                }).catch(error => {
+                    console.error("Error generating certificate:", error);
+                    alert("Failed to generate certificate. Please try again."); // Using alert as a fallback, consider custom modal
+                });
+            }, 2100); // Wait for slideIn animation (2s) + a little buffer
+        }
+
+
+        // --- Event Listeners ---
+        startBtn.onclick = startGame;
+        backBtn.onclick = () => {
+            if (currentLevel > 0) {
+                currentLevel--;
+                updateGameDisplay();
+                playSunny(); // Ensure sun returns if user goes back
+            }
+        };
+        refreshBtn.onclick = startGame;
+
+        sendButton.onclick = () => {
+            if (chatInput.value.trim() !== '') {
+                processChatInput(chatInput.value.trim());
+            }
+        };
+
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && chatInput.value.trim() !== '') {
+                processChatInput(chatInput.value.trim());
+            }
+        });
+
+        downloadCertificateBtn.onclick = downloadCertificate;
+
+        // Initial setup
+        window.onload = () => {
+            // Play background music on user interaction (modern browsers require this)
+            // A common pattern is to play it after the first click on the page.
+            document.body.addEventListener('click', () => {
+                if (bgMusic.paused) {
+                    bgMusic.play().catch(e => console.log("Background music play failed:", e));
+                }
+                if (sunnySound.paused && document.body.classList.contains('sunny')) {
+                    sunnySound.play().catch(e => console.log("Sunny sound play failed:", e));
+                }
+            }, { once: true }); // Only listen for the first click
+
+            // Start butterflies initially if the page loads sunny
+            if (document.body.classList.contains('sunny')) {
+                startButterflies();
+            }
+        };
+
     </script>
 </body>
 </html>

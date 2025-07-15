@@ -351,7 +351,7 @@
             box-shadow: 0 0 15px #ccc;
             z-index: 100;
             border: 3px solid #ffb74d;
-            display: none;
+            display: none; /* Hidden by default */
         }
         /* Chatbot Styles */
         #monikat-chat-container {
@@ -363,15 +363,12 @@
             background-color: #f0f0f0;
             border: 1px solid #ccc;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            display: flex;
+            display: flex; /* Changed to flex to be always visible */
             flex-direction: column;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             z-index: 999;
             border-radius: 8px;
             overflow: hidden;
-            /* REMOVE OR CHANGE THIS LINE: */
-            /* display: none; */ /* THIS IS THE LINE TO CHANGE */
-            /* Change it to 'display: flex;' or simply remove it if you want it always visible */
         }
 
         #monikat-chat-header {
@@ -455,6 +452,56 @@
             text-align: left;
             overflow-x: auto;
         }
+
+        /* Certificate Styles */
+        #certificate {
+            background: linear-gradient(135deg, #f0f9ff, #cde7ff);
+            border: 10px solid #0077cc;
+            padding: 40px;
+            margin-top: 50px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+            font-family: 'Georgia', serif;
+            color: #003366;
+            display: none; /* Hidden by default */
+            z-index: 100;
+            position: relative;
+        }
+        #certificate h2 {
+            font-size: 2.5em;
+            color: #0056b3;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        #certificate p {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
+        #certificate .name {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin: 20px 0;
+            color: #d9534f; /* A nice contrasting color */
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+        }
+        #certificate .score {
+            font-size: 1.5em;
+            margin-top: 25px;
+            color: #28a745;
+            font-weight: bold;
+        }
+        #certificate img {
+            width: 150px;
+            height: auto;
+            margin-top: 30px;
+            border-radius: 50%;
+            border: 4px solid #fff;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        }
     </style>
 </head>
 <body class="sunny">
@@ -504,6 +551,17 @@
 
     <div class="victory hidden" id="victory" role="alert" aria-live="assertive"></div>
 
+    <div id="certificate" class="hidden">
+        <h2>Certificate of Completion</h2>
+        <p>This certifies that</p>
+        <p class="name">A Cloud Quest Enthusiast</p>
+        <p>has successfully completed</p>
+        <p><strong>Monica's Cloud Quest</strong></p>
+        <p class="score">With a score of <span id="final-score">0</span> out of <span id="total-questions">0</span> questions correct!</p>
+        <img src="https://img.icons8.com/plasticine/100/medal2.png" alt="Award Medal">
+        <p style="margin-top: 30px; font-size: 0.9em; font-style: italic;">Congratulations on your cloud learning journey!</p>
+    </div>
+
     <button id="start-btn" class="cloud-button" aria-label="Start the game">☁️ Start</button>
 
     <div id="control-buttons" style="margin-top: 25px; display:none;">
@@ -514,7 +572,8 @@
     <div id="monikat-chat-container">
         <div id="monikat-chat-header">Monikat Chat</div>
         <div id="monikat-chat-log">
-            </div>
+            <p><strong>Monikat:</strong> Welcome to Monica's Cloud Quest! Ask me anything about Oracle Cloud, Java, or the game! Try typing 'hello'.</p>
+        </div>
         <div id="monikat-chat-input-area">
             <input type="text" id="chat-input" placeholder="Type your message...">
             <button id="send-button">Send</button>
@@ -547,6 +606,12 @@
         const monikatChatLog = document.getElementById('monikat-chat-log');
         const chatInput = document.getElementById('chat-input');
         const sendButton = document.getElementById('send-button');
+
+        // Certificate elements
+        const certificateDiv = document.getElementById('certificate');
+        const finalScoreSpan = document.getElementById('final-score');
+        const totalQuestionsSpan = document.getElementById('total-questions');
+
 
         let currentLevel = 0;
         let score = 0;
@@ -618,7 +683,7 @@
             {
                 question: "Let's try a simple Java demo! Type exactly: System.out.println(\"Hello, Oracle!\");",
                 demo: true, // This flag indicates a code demo question
-                hint: "Match capitalization, punctuation exactly.",
+                hint: "The correct code is: `System.out.println(\"Hello, Oracle!\");` Match capitalization, punctuation exactly.",
                 correctDemoInput: 'System.out.println("Hello, Oracle!");',
                 demoSuccessMsg: "Great job! You've run your first Java print statement!"
             },
@@ -664,21 +729,22 @@
             {
                 question: "Create a simple Java calculator that adds two numbers. Enter your code, then input the numbers when prompted.",
                 demo: true,
-                hint: "First, write the full Java program as shown. Then, when prompted, enter two integers. The exact code needs to be provided below.",
+                hint: "The correct Java code is:\n```java\nimport java.util.Scanner;\n\npublic class Calculator {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        System.out.println(\"Enter first number:\");\n        int num1 = scanner.nextInt();\n        System.out.println(\"Enter second number:\");\n        int num2 = scanner.nextInt();\n        int sum = num1 + num2;\n        System.out.println(\"The sum is: \" + sum);\n        scanner.close();\n    }\n}\n```",
                 correctDemoInput: `import java.util.Scanner;
 
 public class Calculator {
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in);
         System.out.println("Enter first number:");
-        int a = sc.nextInt();
+        int num1 = scanner.nextInt();
         System.out.println("Enter second number:");
-        int b = sc.nextInt();
-        System.out.println("Sum: " + (a + b));
-        sc.close();
+        int num2 = scanner.nextInt();
+        int sum = num1 + num2;
+        System.out.println("The sum is: " + sum);
+        scanner.close();
     }
 }`,
-                demoSuccessMsg: "Great! You've created a simple Java calculator!"
+                demoSuccessMsg: "Great! You've created a simple Java calculator! (Input processing is simulated for this demo)"
             },
             {
                 question: "Chat with Monikat: Ask her about Oracle Cloud, Java, or anything else about Monica's Quest!",
@@ -725,7 +791,7 @@ public class Calculator {
                 createRainDrops(80);
                 rainSound.volume = 0.15;
                 rainSound.play();
-                isRaining = true;
+                isRraining = true;
                 document.body.classList.add('rainy');
                 document.body.classList.remove('sunny');
                 sunnySound.pause();
@@ -761,218 +827,217 @@ public class Calculator {
 
         // Show level function
         function showLevel() {
-            stopRain();
-            document.getElementById('control-buttons').style.display = currentLevel === 0 ? 'none' : 'block';
-            log.innerHTML = ''; // Clear previous content
-            victory.classList.add('hidden');
+            stopRain(); // Ensure no rain when a new level starts
+            resetSun(); // Reset sun position at the start of each level
 
             if (currentLevel >= levels.length) {
-                endGame();
+                showVictoryScreen();
                 return;
             }
 
             const level = levels[currentLevel];
+            log.innerHTML = `<p>${level.question}</p>`;
+            appendHintButton(level.hint);
 
-            // Show 'Putty' bubble for the specific level
-            const puttyBubble = document.getElementById('puttyBubble');
-            if (level.question.includes('Putty') && !puttyBubble.dataset.shown) {
-                puttyBubble.style.display = 'block';
-                puttyBubble.dataset.shown = 'true';
-                setTimeout(() => { puttyBubble.style.display = 'none'; }, 3000);
-            } else if (!level.question.includes('Putty')) {
-                puttyBubble.style.display = 'none';
-            }
-
-            // Display question
-            const questionEl = document.createElement('h2');
-            questionEl.textContent = level.question;
-            log.appendChild(questionEl);
-
-            // Display hint
-            const hintEl = document.createElement('p');
-            hintEl.style.fontStyle = 'italic';
-            hintEl.style.color = '#666';
-            hintEl.textContent = 'Hint: ' + level.hint;
-            log.appendChild(hintEl);
-
-            // Handle Java Demo Levels
             if (level.demo) {
-                const javaCodeBlock = document.createElement('div');
-                javaCodeBlock.className = 'java-code-display';
-                javaCodeBlock.innerHTML = `<pre><code>${level.correctDemoInput}</code></pre>`;
-                log.appendChild(javaCodeBlock);
-
-                const input = document.createElement('textarea');
-                input.style.fontSize = '1.1em';
-                input.style.width = 'calc(100% - 20px)';
-                input.style.minHeight = '100px';
-                input.style.marginTop = '15px';
-                input.style.padding = '10px';
-                input.style.borderRadius = '8px';
-                input.style.border = '1px solid #ccc';
-                input.placeholder = "Enter your code here...";
-                log.appendChild(input);
-
-                const submitBtn = document.createElement('button');
-                submitBtn.textContent = 'Run Code';
-                submitBtn.style.marginTop = '15px';
-                submitBtn.onclick = () => {
-                    if (input.value.trim() === level.correctDemoInput.trim()) {
-                        logMessage('You: ' + input.value, 'user-message');
-                        logMessage('Monikat: ' + level.demoSuccessMsg);
-                        awesomeChoice.play();
-                        score++;
-                        setTimeout(nextLevel, 2000);
-                    } else {
-                        logMessage('You: ' + input.value, 'user-message');
-                        logMessage('Monikat: Hmm, that doesn\'t quite look right. Try again, pay close attention to capitalization and punctuation!');
-                        thunderSound.play();
-                    }
+                // Display the correct code for the demo
+                log.innerHTML += `<p><strong>Provide the following code:</strong></p><pre class="java-code-display">${escapeHTML(level.correctDemoInput)}</pre>`;
+                log.innerHTML += `<button id="understand-code-btn" class="main-btn">I understand the code</button>`;
+                document.getElementById('understand-code-btn').onclick = () => {
+                    score++;
+                    displayMessage(level.demoSuccessMsg, 'success');
+                    playCorrectSound();
+                    setTimeout(() => {
+                        currentLevel++;
+                        showLevel();
+                    }, 2000);
                 };
-                log.appendChild(submitBtn);
             } else if (level.chat) {
-                // This block is for chat levels, but we're making the chat always visible
-                // So, no need to toggle display here anymore.
-                // monikatChatContainer.style.display = 'flex'; // This line can be removed
+                log.innerHTML += `<p>Use the chatbox below to talk to Monikat!</p>`;
+                monikatChatContainer.style.display = 'flex'; // Ensure chat is visible
+                chatInput.focus(); // Focus on chat input for convenience
 
-                logMessage('Monikat: Welcome to the chat! Ask me anything about Oracle Cloud or Monica\'s Quest. I\'ll be here for a bit.', 'monikat-message');
-                chatInput.focus();
-                
-                // Clear chat history for new chat session
-                monikatChatLog.innerHTML = '';
-                chatHistory = []; 
-
-                // Auto-advance after chatDuration
-                setTimeout(() => {
-                    logMessage('Monikat: Time to move on! Hope you found our chat helpful.', 'monikat-message');
-                    setTimeout(nextLevel, 2000);
+                let chatTimer = setTimeout(() => {
+                    displayMessage("Time's up for chatting! Moving to the next question.", 'info');
+                    monikatChatContainer.style.display = 'none'; // Hide chat
+                    currentLevel++;
+                    showLevel();
                 }, level.chatDuration);
 
+                // For the chat demo, we just need to confirm the user interacted
+                // You might want more sophisticated chat completion logic here
+                chatInput.onkeydown = (event) => {
+                    if (event.key === 'Enter') {
+                        sendButton.click();
+                    }
+                };
+                sendButton.onclick = () => {
+                    if (chatInput.value.trim() !== '') {
+                        addMessageToChatLog('User', chatInput.value, 'user-message');
+                        // Simulate Monikat's response
+                        let monikatResponse = getMonikatResponse(chatInput.value);
+                        addMessageToChatLog('Monikat', monikatResponse);
+                        chatInput.value = ''; // Clear input
+
+                        // If user sent a message, reset timer for demo completion
+                        clearTimeout(chatTimer);
+                        chatTimer = setTimeout(() => {
+                            displayMessage("Great conversation! Moving to the next question.", 'success');
+                            monikatChatContainer.style.display = 'none'; // Hide chat
+                            score++; // Grant a point for participating in chat
+                            currentLevel++;
+                            showLevel();
+                        }, level.chatDuration / 2); // Shorter follow-up time
+                    }
+                };
+
             } else {
-                // Standard multiple choice answers
                 const optionsDiv = document.createElement('div');
                 optionsDiv.id = 'options';
                 level.answers.forEach(answer => {
                     const button = document.createElement('button');
                     button.textContent = answer.text;
-                    button.onclick = () => selectAnswer(answer.correct);
+                    button.onclick = () => checkAnswer(answer.correct);
                     optionsDiv.appendChild(button);
                 });
                 log.appendChild(optionsDiv);
             }
+
+            // Show control buttons only after start
+            controlButtons.style.display = 'block';
+            updateButtons();
         }
 
-        // --- Chatbot Functionality ---
-        sendButton.addEventListener('click', handleChatInput);
-        chatInput.addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                handleChatInput();
-            }
-        });
-
-        function handleChatInput() {
-            const message = chatInput.value.trim();
-            if (message) {
-                logChat('You: ' + message, 'user-message');
-                chatInput.value = ''; // Clear input field
-                respondToChat(message);
-            }
+        // Add a function to escape HTML for displaying code
+        function escapeHTML(str) {
+            const div = document.createElement('div');
+            div.appendChild(document.createTextNode(str));
+            return div.innerHTML;
         }
 
-        function logChat(message, type = '') {
+        // Monikat Chatbot Logic
+        function addMessageToChatLog(sender, message, className = '') {
             const p = document.createElement('p');
-            p.textContent = message;
-            if (type) {
-                p.classList.add(type);
-            }
+            p.className = className;
+            const strong = document.createElement('strong');
+            strong.textContent = sender + ': ';
+            p.appendChild(strong);
+            p.appendChild(document.createTextNode(message));
             monikatChatLog.appendChild(p);
             monikatChatLog.scrollTop = monikatChatLog.scrollHeight; // Auto-scroll to bottom
+            chatHistory.push({ sender, message }); // Store chat history
         }
 
-        function respondToChat(userMessage) {
-            let monikatResponse = "That's an interesting question! I'm still learning, but I can tell you more about Monica's journey or Oracle Cloud basics.";
-
-            const lowerCaseMessage = userMessage.toLowerCase();
-
-            if (lowerCaseMessage.includes("oracle cloud")) {
-                monikatResponse = "Oracle Cloud Infrastructure (OCI) is Oracle's cloud computing service that offers a wide array of services like computing, storage, networking, databases, and more.";
-            } else if (lowerCaseMessage.includes("java")) {
-                monikatResponse = "Java is a popular, high-level, class-based, object-oriented programming language. Monica used it for coding exercises on her VMs!";
-            } else if (lowerCaseMessage.includes("monica's quest") || lowerCaseMessage.includes("monica")) {
-                monikatResponse = "Monica's Cloud Quest is about her journey learning to set up and use virtual machines on Oracle Cloud, install developer tools, and code in Java!";
-            } else if (lowerCaseMessage.includes("hello") || lowerCaseMessage.includes("hi")) {
-                monikatResponse = "Hello there! How can I help you today regarding Monica's adventure?";
-            } else if (lowerCaseMessage.includes("putty")) {
-                monikatResponse = "Putty is a free and open-source terminal emulator, serial console and network file transfer application. Monica used it for SSH connections!";
-            } else if (lowerCaseMessage.includes("tigervnc")) {
-                monikatResponse = "TigerVNC is a high-performance, platform-neutral implementation of VNC (Virtual Network Computing) used for remote desktop access. Monica used it to graphically access her VMs.";
-            } else if (lowerCaseMessage.includes("ports")) {
-                monikatResponse = "Opening ports is crucial for allowing traffic to and from specific services on your virtual machines. Monica had to configure security rules for this!";
-            } else if (lowerCaseMessage.includes("git")) {
-                monikatResponse = "Git is a distributed version control system for tracking changes in source code during software development. It's essential for collaborative coding!";
-            } else if (lowerCaseMessage.includes("what is")) {
-                monikatResponse = "I can tell you about specific tools or concepts related to Monica's journey, like Oracle Cloud, Java, Putty, or TigerVNC!";
+        function getMonikatResponse(userMessage) {
+            userMessage = userMessage.toLowerCase();
+            if (userMessage.includes('hello') || userMessage.includes('hi')) {
+                return "Hello there! How can I help you on Monica's Cloud Quest?";
+            } else if (userMessage.includes('oracle cloud')) {
+                return "Oracle Cloud Infrastructure (OCI) offers a comprehensive suite of cloud computing services. It's known for its strong performance and enterprise-grade features!";
+            } else if (userMessage.includes('java')) {
+                return "Java is a powerful, object-oriented programming language. It's widely used for enterprise applications, Android development, and big data.";
+            } else if (userMessage.includes('monica')) {
+                return "Monica is your guide on this quest! She's learning about cloud technologies and is excited to share her journey.";
+            } else if (userMessage.includes('game') || userMessage.includes('quest')) {
+                return "This game is designed to teach you about Oracle Cloud and related technologies in a fun, interactive way!";
+            } else if (userMessage.includes('putty')) {
+                return "PuTTY is a free and open-source terminal emulator, serial console and network file transfer application. It supports several network protocols, including SCP, SSH, Telnet, rlogin, and raw socket connection.";
+            } else if (userMessage.includes('tigervnc')) {
+                return "TigerVNC is a high-performance, platform-neutral implementation of VNC (Virtual Network Computing). It allows you to control the graphical desktop of a remote computer.";
+            } else if (userMessage.includes('port') || userMessage.includes('ports')) {
+                return "In networking, a port is an endpoint of a connection. Opening ports on a VM allows specific types of network traffic to reach services running on that VM.";
             }
-
-            // Simulate typing delay
-            setTimeout(() => {
-                logChat('Monikat: ' + monikatResponse, 'monikat-message');
-            }, 1000);
-        }
-
-        function logMessage(message, type = '') {
-            const p = document.createElement('p');
-            p.textContent = message;
-            if (type) {
-                p.classList.add(type);
+            else {
+                return "That's an interesting question! I'm still learning, but I can help with topics like Oracle Cloud, Java, Putty, or the game itself.";
             }
-            log.appendChild(p);
-            log.scrollTop = log.scrollHeight;
         }
 
-        function selectAnswer(isCorrect) {
-            const buttons = document.querySelectorAll('#options button');
-            buttons.forEach(button => button.disabled = true); // Disable buttons after selection
 
+        // Game Logic Functions
+        function checkAnswer(isCorrect) {
             if (isCorrect) {
-                logMessage('Monikat: Awesome choice! That\'s correct!', 'monikat-message');
-                awesomeChoice.play();
+                displayMessage('Correct! Excellent job!', 'success');
                 score++;
-                if (currentLevel + 1 < levels.length && levels[currentLevel + 1].chat) {
-                    // If next level is chat, keep chat container visible
-                } else {
-                    // monikatChatContainer.style.display = 'none'; // This line can be removed
-                }
-                setTimeout(nextLevel, 2000);
+                playCorrectSound();
             } else {
-                logMessage('Monikat: Not quite right. Keep learning, you\'ll get it!', 'monikat-message');
-                thunderSound.play();
-                // If it's a regular quiz question, allow another attempt or move on
-                // For now, we'll just move on for simplicity in this demo.
-                setTimeout(nextLevel, 2000);
+                displayMessage('Incorrect. Try again or use the hint.', 'error');
+                playThunderSound();
             }
+            // Temporarily disable buttons to prevent multiple clicks
+            const buttons = document.querySelectorAll('#options button');
+            buttons.forEach(button => button.disabled = true);
+
+            setTimeout(() => {
+                currentLevel++;
+                showLevel();
+            }, 1500);
         }
 
-        function nextLevel() {
-            currentLevel++;
-            showLevel();
+        function displayMessage(message, type = 'info') {
+            const messageElement = document.createElement('p');
+            messageElement.textContent = message;
+            messageElement.style.marginTop = '15px';
+            messageElement.style.fontWeight = 'bold';
+            if (type === 'success') {
+                messageElement.style.color = '#1b5e20';
+            } else if (type === 'error') {
+                messageElement.style.color = '#c62828';
+                startRain(); // Start rain on error
+                sunFall(); // Sun falls on error
+                setTimeout(stopRain, 3000); // Stop rain after 3 seconds
+                setTimeout(resetSun, 3000); // Reset sun after 3 seconds
+            } else if (type === 'info') {
+                messageElement.style.color = '#004d80';
+            }
+            log.appendChild(messageElement);
+            log.scrollTop = log.scrollHeight; // Scroll to bottom
         }
 
-        function endGame() {
-            log.innerHTML = '';
-            controlButtons.style.display = 'block';
-            backBtn.style.display = 'none'; // No going back after victory
-            
+        function appendHintButton(hintText) {
+            const hintBtn = document.createElement('button');
+            hintBtn.textContent = 'Hint';
+            hintBtn.className = 'hint-btn'; // You might want to style this differently
+            hintBtn.onclick = () => displayMessage(`Hint: ${hintText}`, 'info');
+            log.appendChild(hintBtn);
+        }
+
+        function playCorrectSound() {
+            correctSound.currentTime = 0;
+            correctSound.play();
+        }
+
+        function playThunderSound() {
+            thunderSound.currentTime = 0;
+            thunderSound.play();
+        }
+
+        function playAwesomeChoiceSound() {
+            awesomeChoice.currentTime = 0;
+            awesomeChoice.play();
+        }
+
+        function showVictoryScreen() {
+            log.classList.add('hidden');
+            controlButtons.classList.add('hidden');
+            monikatChatContainer.style.display = 'none'; // Hide chat at the end
+
+            finalScoreSpan.textContent = score;
+            totalQuestionsSpan.textContent = levels.length;
+            certificateDiv.classList.remove('hidden');
+
             victory.classList.remove('hidden');
-            victory.textContent = `Congratulations! You've completed Monica's Cloud Quest with a score of ${score} out of ${levels.length - 1} questions (excluding chat/demo levels in score).`; // Adjust score calculation
-            
+            victory.textContent = `🎊 Quest Complete! You've learned a lot about Oracle Cloud and Java! 🎊`;
             confetti({
-                particleCount: 100,
-                spread: 70,
+                particleCount: 150,
+                spread: 180,
                 origin: { y: 0.6 }
             });
-            sunBlowUp(); // Make sun explode on victory
-            setTimeout(resetSun, 1000); // Reset sun after explosion
+            // Stop background music and play awesome choice sound for victory
+            bgMusic.pause();
+            bgMusic.currentTime = 0;
+            sunnySound.pause();
+            sunnySound.currentTime = 0;
+            playAwesomeChoiceSound();
         }
 
         function restartGame() {
@@ -980,48 +1045,48 @@ public class Calculator {
             score = 0;
             log.innerHTML = '';
             victory.classList.add('hidden');
-            startBtn.style.display = 'inline-block';
+            certificateDiv.classList.add('hidden'); // Hide certificate on restart
+            startBtn.classList.remove('hidden');
             controlButtons.style.display = 'none';
-            backBtn.style.display = 'block'; // Make back button available again
-            resetSun();
+            monikatChatLog.innerHTML = `<p><strong>Monikat:</strong> Welcome to Monica's Cloud Quest! Ask me anything about Oracle Cloud, Java, or the game! Try typing 'hello'.</p>`;
+            chatHistory = [];
             stopRain();
-            // monikatChatContainer.style.display = 'none'; // This line can be removed
-            playMusic(sunnySound); // Restart sunny music
+            resetSun();
+            bgMusic.pause();
+            bgMusic.currentTime = 0; // Reset music
+            sunnySound.pause();
+            sunnySound.currentTime = 0;
         }
 
-        function goBack() {
-            if (currentLevel > 0) {
-                currentLevel--;
-                showLevel();
-            }
-        }
-
-        function playMusic(audioElement) {
-            // Pause any currently playing background music
-            [bgMusic, rainSound, sunnySound].forEach(sound => {
-                if (sound !== audioElement && !sound.paused) {
-                    sound.pause();
-                    sound.currentTime = 0;
-                }
-            });
-            audioElement.volume = 0.15;
-            audioElement.play().catch(e => console.error("Error playing audio:", e));
+        function updateButtons() {
+            // No specific button state changes needed here for now,
+            // but this function is a placeholder for future enhancements.
         }
 
         // Event Listeners
         startBtn.addEventListener('click', () => {
-            startBtn.style.display = 'none';
-            playMusic(sunnySound); // Start sunny music when game starts
+            startBtn.classList.add('hidden');
             showLevel();
+            bgMusic.volume = 0.05; // Set a low volume for background music
+            bgMusic.play();
+            sunnySound.volume = 0.15;
+            sunnySound.play();
         });
 
         refreshBtn.addEventListener('click', restartGame);
-        backBtn.addEventListener('click', goBack);
 
-        // Initial setup for the chatbot to be visible
-        // You can remove the `display: none;` from CSS,
-        // or add this line to your script to force it visible on load:
-        // monikatChatContainer.style.display = 'flex'; // Add this line if you keep `display: none;` in CSS
+        backBtn.addEventListener('click', () => {
+            if (currentLevel > 0) {
+                currentLevel--;
+                // If going back from a demo or chat level, don't decrement score
+                // unless you specifically want to track errors or re-attempts.
+                // For now, assume going back is just navigation.
+                showLevel();
+            } else {
+                displayMessage("You're at the beginning of the quest!", 'info');
+            }
+        });
+
     </script>
 </body>
 </html>
