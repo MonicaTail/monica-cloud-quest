@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>☁️ Monica's Cloud Quest ☁️</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+    <style>
+        /* === Page Styles === */
+        body {
+            background: linear-gradient(to bottom, #fff9db, #f7e7a7);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            padding: 50px;
+            overflow-x: hidden;
+            color: #003366;
+            user-select: none;
+            min-height: 100vh;
+            transition: background 1s ease;
+        }
+        body.rainy {
+            background: linear-gradient(to bottom, #546a7b, #a0b8ca);
+            filter: brightness(0.85);
+        }
+        body.sunny {
+            background: linear-gradient(to bottom, #fff9db, #f7e7a7);
+            filter: brightness(1.1);
+        }
+        h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            animation: popIn 2s ease;
+            text-shadow: 0 0 15px #4fa1d8;
+        }
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        /* Buttons styling */
+        button {
+            padding: 14px 28px;
+            margin: 12px;
+            font-size: 16px;
+            background: linear-gradient(145deg, #a7d7f9, #89c2f7);
+            color: #003366;
+            border: 2px solid #4fa1d8;
+            border-radius: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
+            font-weight: 600;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            user-select: none;
+            position: relative;
+            overflow: hidden;
+        }
+        button:hover:not(:disabled) {
+            background: linear-gradient(145deg, #89c2f7, #a7d7f9);
+            transform: scale(1.1) rotate(-1deg);
+            box-shadow: 0 10px 25px rgba(0, 119, 204, 0.6);
+        }
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            box-shadow: none;
+            color: #666;
+        }
+        /* Back and refresh buttons styles */
+        .back-btn {
+            background: #bbb !important;
+            color: #222 !important;
+        }
+        .refresh-btn {
+            background: #ffd54f !important;
+            color: #333 !important;
+            border-color: #ffca28 !important;
+        }
+        /* Hidden class */
+        .hidden {
+            display: none;
+        }
+        /* Log area styles */
+        #log {
+            text-align: left;
+            margin-top: 30px;
+            background: transparent;
+            padding: 25px 30px;
+            border-radius: 15px;
+            max-width: 840px;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: none;
+            min-height: 220px;
+            font-size: 1.1em;
+            color: #003366;
+            user-select: text;
+            position: relative;
+            z-index: 10;
+        }
+        /* Victory message styles */
+        .victory {
+            color: #1b5e20;
+            font-weight: bold;
+            margin-top: 40px;
+            font-size: 1.8em;
+            text-shadow: 0 0 15px #00cc00;
+            animation: glow 1.5s ease-in-out infinite alternate;
+            max-width: 840px;
+            margin-left: auto;
+            margin-right: auto;
+            background: #e6ffe6cc;
+            padding: 30px;
+            border-radius: 18px;
+            box-shadow: 0 0 30px #00cc00aa;
+            position: relative;
+            overflow: hidden;
+            z-index: 10;
+        }
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 15px #00cc00, 0 0 25px #00cc00;
+            }
+            to {
+                text-shadow: 0 0 25px #00ff00, 0 0 35px #00ff00;
+            }
+        }
+        /* Avatar selection styles */
+        .avatar-selection {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+            margin: 35px auto 15px auto;
+            position: relative;
+            z-index: 10;
+        }
+        .avatar {
+            cursor: pointer;
+            border: 5px solid transparent;
+            border-radius: 50%;
+            width: 140px;
+            height: 140px;
+            transition: all 0.35s ease-in-out;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+            filter: drop-shadow(0 0 3px #77bfff);
+            user-select: none;
+            position: relative;
+            background: #d0e8ff;
+        }
+        .avatar:hover, .avatar.selected {
+            transform: scale(1.15) rotate(-5deg);
+            border-color: #0077cc;
+            box-shadow: 0 0 28px rgba(0, 119, 204, 0.85);
+            filter: drop-shadow(0 0 12px #3399ff);
+            background: linear-gradient(145deg, #89c2f7, #a7d7f9);
+        }
+        /* Character message styles */
+        #character-message {
+            font-style: italic;
+            color: #004d80;
+            margin-top: 15px;
+            font-size: 1.15em;
+            min-height: 40px;
+            max-width: 720px;
+            margin-left: auto;
+            margin-right: auto;
+            user-select: none;
+            transition: all 0.3s ease-in-out;
+            position: relative;
+            z-index: 10;
+        }
+        /* Option buttons styles */
+        #options button {
+            display: block;
+            width: 100%;
+            max-width: 400px;
+            margin: 12px auto;
+            font-size: 1.1em;
+            border-radius: 22px;
+            background: linear-gradient(135deg, #9cd3f5, #5fa9f5);
+            color: #002244;
+            font-weight: 700;
+            letter-spacing: 0.9px;
+            box-shadow: 0 6px 18px rgba(45, 118, 205, 0.7);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            user-select: none;
+            position: relative;
+            overflow: hidden;
+        }
+        #options button:hover:not(:disabled) {
+            transform: scale(1.15) rotate(1deg);
+            box-shadow: 0 10px 28px rgba(0, 120, 255, 0.9);
+            background: linear-gradient(135deg, #5fa9f5, #9cd3f5);
+            color: #001a3c;
+        }
+        /* Cloud Button style (interactive cloud) */
+        .cloud-button {
+            font-size: 4rem;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            transition: transform 0.3s ease, filter 0.3s ease;
+            user-select: none;
+            color: #3399ff;
+            filter: drop-shadow(0 0 8px #66b3ff);
+            margin: 10px auto 30px auto;
+            display: inline-block;
+            position: relative;
+            z-index: 10;
+        }
+        .cloud-button:hover {
+            transform: scale(1.3) rotate(-10deg);
+            color: #66ccff;
+            filter: drop-shadow(0 0 20px #99ddff);
+        }
+        /* Floating clouds at top styles */
+        .floating-clouds {
+            position: fixed;
+            top: 10px;
+            left: 0;
+            width: 100%;
+            height: 50px;
+            pointer-events: none;
+            overflow: visible;
+            z-index: 5;
+        }
+        .floating-clouds .cloud {
+            position: absolute;
+            background: #ffffffcc;
+            border-radius: 50% / 60%;
+            padding: 10px 25px;
+            font-weight: bold;
+            color: #336699;
+            box-shadow: 0 0 15px #ccc;
+            animation: floatClouds 6s ease-in-out infinite alternate;
+            font-size: 1.2rem;
+            user-select: none;
+            filter: drop-shadow(0 0 6px #a0c8ff);
+            cursor: default;
+            white-space: nowrap;
+        }
+        .floating-clouds .cloud:nth-child(odd) {
+            animation-duration: 8s;
+        }
+        .floating-clouds .cloud:nth-child(1) { top: 5px; left: 6%; }
+        .floating-clouds .cloud:nth-child(2) { top: 12px; left: 23%; }
+        .floating-clouds .cloud:nth-child(3) { top: 8px; left: 38%; }
+        .floating-clouds .cloud:nth-child(4) { top: 5px; left: 52%; }
+        .floating-clouds .cloud:nth-child(5) { top: 12px; left: 68%; }
+        .floating-clouds .cloud:nth-child(6) { top: 8px; left: 83%; }
+        @keyframes floatClouds {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(50px); }
+        }
+        /* Rain effect styles */
+        #rain {
+            pointer-events: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            overflow: hidden;
+            z-index: 9999;
+            mix-blend-mode: screen;
+        }
+        .raindrop {
+            position: absolute;
+            bottom: 100%;
+            width: 2px;
+            height: 15px;
+            background: #a3c1e0cc;
+            animation: fall linear infinite;
+            opacity: 0.6;
+            border-radius: 50%;
+            filter: drop-shadow(0 0 3px #a0b8ca);
+        }
+        @keyframes fall {
+            to {
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+        }
+        /* Sun styles */
+        #sunrays {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            width: 100px;
+            height: 100px;
+            background: #ffcc00;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(255, 204, 0, 0.7);
+            z-index: 9999;
+            pointer-events: none;
+            transition: all 0.5s ease-out; /* Smooth transition for repositioning */
+        }
+        /* Sun falling animation */
+        @keyframes fallDown {
+            0% { top: 70px; opacity: 1; transform: translateY(0); }
+            100% { top: 150vh; opacity: 0; transform: translateY(200px); }
+        }
+        /* Sun returning to original position */
+        .sun-return {
+            animation: sunReturn 1s forwards;
+        }
+        @keyframes sunReturn {
+            0% { top: 150vh; opacity: 0; transform: translateY(200px); } /* Start from fallen state */
+            100% { top: 70px; opacity: 1; transform: translateY(0); } /* Return to original */
+        }
+
+        .sun-fall {
+            animation: fallDown 2s forwards;
+        }
+
+        /* Butterflies styles */
+        #butterflies {
+            position: fixed;
+            top: 10%;
+            left: 0;
+            width: 100%;
+            height: 80vh;
+            pointer-events: none;
+            overflow: visible;
+            z-index: 1000;
+        }
+        .butterfly {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: url('https://cdn-icons-png.flaticon.com/512/5426/5426522.png') no-repeat center center / contain;
+            animation: flyAround 12s linear infinite;
+            opacity: 0.85;
+            filter: drop-shadow(0 0 4px #faa);
+            user-select: none;
+            pointer-events: none;
+        }
+        @keyframes flyAround {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(30vw, -10vh) rotate(45deg); }
+            50% { transform: translate(60vw, 5vh) rotate(0deg); }
+            75% { transform: translate(40vw, 15vh) rotate(-45deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+        /* Bubble on top with "Putty" */
+        .top-bubble {
+            position: fixed;
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #ffe0b2;
+            padding: 15px 25px;
+            border-radius: 35px;
+            font-weight: bold;
+            font-size: 1.2em;
+            box-shadow: 0 0 15px #ccc;
+            z-index: 100;
+            border: 3px solid #ffb74d;
+            display: none;
+        }
+        /* Chatbot Styles */
+        #monikat-chat-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 300px;
+            height: 400px;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: flex; /* Changed to flex to be always visible */
+            flex-direction: column;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            z-index: 999;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        #monikat-chat-header {
+            background: linear-gradient(145deg, #a7d7f9, #89c2f7);
+            color: #003366;
+            padding: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            text-align: center;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            cursor: default;
+            user-select: none;
+        }
+
+        #monikat-chat-log {
+            flex-grow: 1;
+            padding: 10px;
+            overflow-y: auto;
+            background-color: white;
+            word-wrap: break-word;
+            border-bottom: 1px solid #eee;
+        }
+
+        #monikat-chat-log p {
+            margin: 5px 0;
+            line-height: 1.4;
+        }
+
+        /* Styles for Monikat's message */
+        #monikat-chat-log p strong {
+            color: #0056b3;
+        }
+        /* Styles for user's message */
+        #monikat-chat-log p.user-message {
+            text-align: right;
+            color: #1b5e20;
+        }
+
+        #monikat-chat-input-area {
+            display: flex;
+            padding: 10px;
+            background-color: #f0f0f0;
+        }
+
+        #chat-input {
+            flex-grow: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-right: 5px;
+            font-size: 0.9em;
+            background-color: white;
+            color: #333;
+        }
+
+        #send-button {
+            padding: 8px 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background-color 0.2s ease;
+        }
+
+        #send-button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Updated Java code display style */
+        .java-code-display {
+            background-color: #f0f0f0; /* Light grey background */
+            color: #333; /* Dark text color */
+            font-family: 'Consolas', 'Monaco', monospace;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            white-space: pre-wrap;
+            text-align: left;
+            overflow-x: auto;
+            border: 1px solid #ccc; /* Add a subtle border */
+        }
+
+        /* Certificate Styles */
+        #certificate {
+            background: linear-gradient(135deg, #f0f9ff, #cde7ff);
+            border: 10px solid #0077cc;
+            padding: 40px;
+            margin-top: 50px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+            font-family: 'Georgia', serif;
+            color: #003366;
+            z-index: 100;
+            position: relative;
+        }
+        #certificate h2 {
+            font-size: 2.5em;
+            color: #0056b3;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        #certificate p {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
+        #certificate .name {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin: 20px 0;
+            color: #d9534f; /* A nice contrasting color */
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+        }
+        #certificate .score {
+            font-size: 1.5em;
+            margin-top: 25px;
+            color: #28a745;
+            font-weight: bold;
+        }
+        #certificate img {
+            width: 150px;
+            height: auto;
+            margin-top: 30px;
+            border-radius: 50%;
+            border: 4px solid #fff;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        }
+
+        /* --- Ben's Message Animation (Slide In) --- */
+        @keyframes slideIn {
+            0% { transform: translateX(-100%); opacity: 0; }
+            100% { transform: translateX(0); opacity: 1; }
+        }
+
+        /* New keyframes for floating movement */
+        @keyframes floatText {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .ben-message {
+            animation: slideIn 2s ease-out forwards, floatText 3s ease-in-out infinite alternate; /* Apply both animations */
+            margin-top: 20px;
+            font-size: 1em;
+            font-weight: bold;
+            color: #004080; /* Changed color to a darker blue */
+            opacity: 0; /* Initially hidden */
+        }
+    </style>
+</head>
+<body class="sunny">
+    <div class="floating-clouds" aria-hidden="true">
+        <div class="cloud">Java</div>
+        <div class="cloud">Tomcat</div>
+        <div class="cloud">Oracle</div>
+        <div class="cloud">Putty</div>
+        <div class="cloud">NetBeans</div>
+        <div class="cloud">TigerVNC</div>
+		<div class="cloud">Git</div>
+    </div>
+
+    <div class="top-bubble" id="puttyBubble">Putty</div>
+
+    <h1>☁️ Monica's Cloud Quest ☁️</h1>
+
+    <audio id="bg-music" loop preload="auto" volume="1.0">
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg" />
+    </audio>
+
+    <audio id="correct-sound" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg" preload="auto"></audio>
+    <audio id="thunder-sound" src="https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg" preload="auto"></audio>
+    <audio id="awesome-choice" src="https://actions.google.com/sounds/v1/cartoon/concussive_hit_guitar_boing.ogg" preload="auto"></audio>
+    <audio id="rain-sound" src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_3a1c1dd90d.mp3?filename=rain-loop-11488.mp3" loop preload="auto"></audio>
+    <audio id="sunny-sound" src="https://cdn.pixabay.com/download/audio/2023/08/30/audio_4e98b46e01.mp3?filename=happy-music-12666.mp3" loop preload="auto"></audio>
+
+    <div id="rain" aria-hidden="true"></div>
+
+    <div id="sunrays" aria-hidden="true" aria-label="Sun rays">
+        <!-- Rays can be dynamically generated or styled with CSS if needed -->
+    </div>
+
+    <div id="butterflies" aria-hidden="true"></div>
+
+    <div id="log" role="main" aria-live="polite" aria-atomic="true" tabindex="0"></div>
+
+    <div class="victory hidden" id="victory" role="alert" aria-live="assertive"></div>
+
+    <div id="certificate" class="hidden">
+        <h2>Certificate of Completion</h2>
+        <p>This certifies that</p>
+        <p class="name" id="certificate-name">A Cloud Quest Enthusiast</p>
+        <p>has successfully completed</p>
+        <p><strong>Monica's Cloud Quest</strong></p>
+        <p class="score">With a score of <span id="final-score">0</span> out of <span id="total-questions">0</span> questions correct!</p>
+        <img src="https://img.icons8.com/plasticine/100/medal2.png" alt="Award Medal">
+        <p style="margin-top: 30px; font-size: 0.9em; font-style: italic;">Congratulations on your cloud learning journey!</p>
+        <!-- Ben's thank you message with animation class -->
+        <p class="ben-message" style="text-align: center;">
+            A special thanks to Ben for inspiring this quest!
+        </p>
+        <button id="download-certificate-btn" style="margin-top: 20px;">Download Certificate</button>
+    </div>
+
+    <button id="start-btn" class="cloud-button" aria-label="Start the game">☁️ Start</button>
+
+    <div id="control-buttons" style="margin-top: 25px; display:none;">
+        <button id="back-btn" class="back-btn" aria-label="Go back to previous question">Back</button>
+        <button id="refresh-btn" class="refresh-btn" aria-label="Restart the game">Restart</button>
+    </div>
+
+    <div id="monikat-chat-container">
+        <div id="monikat-chat-header">Monikat Chat</div>
+        <div id="monikat-chat-log">
+            <p><strong>Monikat:</strong> Welcome to Monica's Cloud Quest! Ask me anything about Oracle Cloud, Java, or the game! Try typing 'hello'.</p>
+        </div>
+        <div id="monikat-chat-input-area">
+            <input type="text" id="chat-input" placeholder="Type your message...">
+            <button id="send-button">Send</button>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        // Variables & Elements
+        const log = document.getElementById('log');
+        const victory = document.getElementById('victory');
+        const startBtn = document.getElementById('start-btn');
+        const backBtn = document.getElementById('back-btn');
+        const refreshBtn = document.getElementById('refresh-btn');
+        const controlButtons = document.getElementById('control-buttons');
+
+        const bgMusic = document.getElementById('bg-music');
+        const correctSound = document.getElementById('correct-sound');
+        const thunderSound = document.getElementById('thunder-sound');
+        const awesomeChoice = document.getElementById('awesome-choice');
+        const rainSound = document.getElementById('rain-sound');
+        const sunnySound = document.getElementById('sunny-sound');
+
+        const rainContainer = document.getElementById('rain');
+        const butterfliesContainer = document.getElementById('butterflies');
+
+        const sun = document.getElementById('sunrays');
+
+        // New elements for the Monikat Chatbot
+        const monikatChatContainer = document.getElementById('monikat-chat-container');
+        const monikatChatLog = document.getElementById('monikat-chat-log');
+        const chatInput = document.getElementById('chat-input');
+        const sendButton = document.getElementById('send-button');
+
+        // Certificate elements
+        const certificateDiv = document.getElementById('certificate');
+        const finalScoreSpan = document.getElementById('final-score');
+        const totalQuestionsSpan = document.getElementById('total-questions');
+        const downloadCertificateBtn = document.getElementById('download-certificate-btn');
+        const certificateNameSpan = document.getElementById('certificate-name');
+
+
+        let currentLevel = 0;
+        let score = 0;
+        let isRaining = false;
+        let chatHistory = []; // To store Monikat chat messages
+
+        // Levels with added new content
+        const levels = [
+            {
+                question: "Which is the best way to start with Oracle Cloud?",
+                answers: [
+                    { text: "Use Facebook Login", correct: false },
+                    { text: "Create an Oracle Cloud account", correct: true },
+                    { text: "Download Oracle NetBeans", correct: false },
+                    { text: "Use AWS instead", correct: false }
+                ],
+                hint: "You need an official Oracle account first."
+            },
+            {
+                question: "Why did Monica create 2 VMs in Oracle Cloud?",
+                answers: [
+                    { text: "First VM was too small to run everything", correct: true },
+                    { text: "Wanted a backup VM", correct: false },
+                    { text: "Just to experiment with multiple VMs", correct: false },
+                    { text: "Because of cost savings", correct: false }
+                ],
+                hint: "Capacity was the issue."
+            },
+            {
+                question: "What remote desktop tool did Monica install on her VMs?",
+                answers: [
+                    { text: "TigerVNC", correct: true },
+                    { text: "TeamViewer", correct: false },
+                    { text: "AnyDesk", correct: false },
+                    { text: "Remote Desktop Protocol (RDP)", correct: false }
+                ],
+                hint: "Starts with 'Tiger'."
+            },
+            {
+                question: "How did Monica handle opening ports in Oracle Cloud?",
+                answers: [
+                    { text: "Added specific ports for services", correct: true },
+                    { text: "Blocked all ports for security", correct: false },
+                    { text: "Left default ports open", correct: false },
+                    { text: "Didn't configure ports", correct: false }
+                ],
+                hint: "She customized port access."
+            },
+            {
+                question: "Which tools did Monica learn to install on her VMs?",
+                answers: [
+                    { text: "TigerVNC, Git, Java Learning", correct: true },
+                    { text: "Docker, Kubernetes", correct: false },
+                    { text: "Photoshop, Illustrator", correct: false },
+                    { text: "VMware, Hyper-V", correct: false }
+                ],
+                hint: "Includes version control and remote desktop."
+            },
+            {
+                question: "Monica learned to code Java. Which IDE is popular for Java development?",
+                answers: [
+                    { text: "NetBeans", correct: true },
+                    { text: "Visual Studio Code", correct: false },
+                    { text: "Sublime Text", correct: false },
+                    { text: "PyCharm", correct: false }
+                ],
+                hint: "Oracle owns this IDE."
+            },
+            {
+                question: "Let's try a simple Java demo! Type exactly: System.out.println(\"Hello, Oracle!\");",
+                demo: true, // This flag indicates a code demo question
+                hint: "Match capitalization, punctuation exactly.",
+                correctDemoInput: 'System.out.println("Hello, Oracle!");',
+                demoSuccessMsg: "Great job! You've run your first Java print statement!"
+            },
+            {
+                question: "Let's do a simple Java calculation! Type exactly: System.out.println(5 + 7);",
+                demo: true,
+                hint: "Copy and paste this code into the input box: System.out.println(5 + 7);",
+                correctDemoInput: 'System.out.println(5 + 7);',
+                demoSuccessMsg: "Excellent! You've performed a Java calculation!"
+            },
+            {
+                question: "Now, let's test Monikat herself! Type 'hello' into the chat window to see her response.",
+                chatDemo: true, // New flag for chat-based demo
+                hint: "Find the chat window in the bottom right corner and type 'hello'.",
+                correctChatInput: 'hello', // The expected input for the chat demo
+                chatSuccessMsg: "Monikat responded! You've successfully interacted with the chatbot!"
+            }
+            // Add more levels here if needed.
+        ];
+
+        // --- Game Logic Functions ---
+
+        function startGame() {
+            startBtn.style.display = 'none';
+            controlButtons.style.display = 'block';
+            currentLevel = 0;
+            score = 0;
+            updateGameDisplay();
+            playSunny();
+            document.body.classList.remove('rainy');
+            document.body.classList.add('sunny');
+            victory.classList.add('hidden');
+            certificateDiv.classList.add('hidden'); // Ensure certificate is hidden at start
+
+            // Reset sun position in case it fell in a previous game
+            sun.classList.remove('sun-fall');
+            sun.classList.remove('sun-return');
+            sun.style.top = '70px';
+            sun.style.opacity = '1';
+
+            // Clear chat log and enable chat input at the start of the game
+            monikatChatLog.innerHTML = '<p><strong>Monikat:</strong> Welcome to Monica\'s Cloud Quest! Ask me anything about Oracle Cloud, Java, or the game! Try typing \'hello\'.</p>';
+            chatInput.removeAttribute('disabled');
+            sendButton.removeAttribute('disabled');
+        }
+
+        function updateGameDisplay() {
+            if (currentLevel < levels.length) {
+                const level = levels[currentLevel];
+                log.innerHTML = `<h2>Level ${currentLevel + 1}:</h2><p>${level.question}</p>`;
+
+                // Disable main game buttons if it's a chat demo
+                if (level.chatDemo) {
+                    controlButtons.style.display = 'none'; // Hide back/refresh during chat demo
+                    chatInput.removeAttribute('disabled'); // Ensure chat input is enabled
+                    sendButton.removeAttribute('disabled');
+                    log.innerHTML += `<p style="font-style: italic; color: #004d80; margin-top: 10px;">${level.hint}</p>`;
+                } else if (level.demo) { // Java code demo
+                    log.innerHTML += `<div class="java-code-display" contenteditable="true" id="java-demo-input" placeholder="Type code here..."></div>
+                                        <button id="submit-demo-btn">Submit Code</button>`;
+                    document.getElementById('submit-demo-btn').onclick = () => checkDemoAnswer(level.correctDemoInput, level.demoSuccessMsg);
+                    chatInput.value = ''; // Clear chat input for demo
+                    chatInput.setAttribute('disabled', 'true'); // Disable chat during Java demo
+                    sendButton.setAttribute('disabled', 'true');
+                    controlButtons.style.display = 'block'; // Show back/refresh
+                } else { // Regular multiple choice
+                    const optionsDiv = document.createElement('div');
+                    optionsDiv.id = 'options';
+                    level.answers.forEach(answer => {
+                        const button = document.createElement('button');
+                        button.textContent = answer.text;
+                        button.onclick = () => checkAnswer(answer.correct, level.hint);
+                        optionsDiv.appendChild(button);
+                    });
+                    log.appendChild(optionsDiv);
+                    chatInput.removeAttribute('disabled'); // Ensure chat is enabled
+                    sendButton.removeAttribute('disabled');
+                    controlButtons.style.display = 'block'; // Show back/refresh
+                }
+            } else { // Display certificate after the last level
+                log.classList.add('hidden');
+                controlButtons.style.display = 'none';
+                victory.classList.remove('hidden');
+                victory.innerHTML = `<h2>Cloud Quest Complete!</h2><p>You answered ${score} out of ${levels.length} questions correctly.</p>`;
+                rainSound.pause();
+                rainSound.currentTime = 0;
+                sunnySound.pause();
+                sunnySound.currentTime = 0;
+                bgMusic.pause(); // Pause background music
+
+                // Disable chat input at the end of the game
+                chatInput.setAttribute('disabled', 'true');
+                sendButton.setAttribute('disabled', 'true');
+
+                showCertificate();
+            }
+        }
+
+        function checkAnswer(isCorrect, hint) {
+            if (isCorrect) {
+                score++;
+                logMessage('<strong>Monikat:</strong> That\'s right! Awesome choice! 🥳');
+                awesomeChoice.play();
+                triggerConfetti();
+                playSunny(); // Ensure sun returns on correct answer
+                setTimeout(() => {
+                    currentLevel++;
+                    updateGameDisplay();
+                }, 1500);
+            } else {
+                logMessage(`<strong>Monikat:</strong> Not quite. Here's a hint: ${hint}. Try again! 🤔`);
+                thunderSound.play();
+                toggleRainEffect(); // This already triggers sun fall
+            }
+        }
+
+        function checkDemoAnswer(correctInput, successMsg) {
+            const userInput = document.getElementById('java-demo-input').textContent.trim();
+            if (userInput === correctInput) {
+                score++;
+                logMessage(`<strong>Monikat:</strong> ${successMsg} 🎉`);
+                correctSound.play();
+                triggerConfetti();
+                playSunny(); // Ensure sun returns on correct answer
+                setTimeout(() => {
+                    currentLevel++;
+                    updateGameDisplay();
+                    chatInput.removeAttribute('disabled');
+                    sendButton.removeAttribute('disabled');
+                }, 1500);
+            } else {
+                logMessage(`<strong>Monikat:</strong> That's not quite right. Double-check your syntax! 🤔`);
+                thunderSound.play();
+                toggleRainEffect(); // This already triggers sun fall
+            }
+        }
+
+        // --- Helper Functions (Audio, Visual Effects, Chatbot) ---
+
+        function logMessage(message) {
+            // This function is now specifically for game-related messages in the main log area
+            const p = document.createElement('p');
+            p.innerHTML = message;
+            log.appendChild(p);
+            log.scrollTop = log.scrollHeight; // Auto-scroll to bottom
+        }
+
+        function addChatbotMessage(sender, message, isUser = false) {
+            // This function is specifically for messages in the Monikat chat log
+            const p = document.createElement('p');
+            p.innerHTML = `<strong>${sender}:</strong> ${message}`;
+            if (isUser) {
+                p.classList.add('user-message');
+            }
+            monikatChatLog.appendChild(p);
+            monikatChatLog.scrollTop = monikatChatLog.scrollHeight; // Auto-scroll to bottom
+        }
+
+        async function processChatInput(input) {
+            addChatbotMessage('You', input, true);
+            chatInput.value = ''; // Clear input field
+
+            const currentLevelData = levels[currentLevel];
+            let monikatResponse = "I'm not sure how to respond to that. Can you rephrase?"; // Default response
+
+            // Logic for the specific chat demo level (Level 9)
+            if (currentLevelData && currentLevelData.chatDemo) {
+                const normalizedInput = input.trim().toLowerCase();
+                if (normalizedInput === currentLevelData.correctChatInput.toLowerCase()) {
+                    score++;
+                    addChatbotMessage('Monikat', currentLevelData.chatSuccessMsg + ' 🎉');
+                    correctSound.play();
+                    triggerConfetti();
+                    playSunny();
+                    setTimeout(() => {
+                        currentLevel++;
+                        updateGameDisplay();
+                        controlButtons.style.display = 'block'; // Re-enable back/refresh
+                    }, 1500);
+                    return; // Exit function after handling chat demo
+                } else {
+                    addChatbotMessage('Monikat', `That's not quite what I was looking for. Remember the hint: "${currentLevelData.hint}" 🤔`);
+                    thunderSound.play();
+                    toggleRainEffect();
+                    return; // Exit function after handling chat demo
+                }
+            }
+
+            // --- Logic for all other levels (before Level 9 or after Level 9 is passed) ---
+            // Determine if we should use local responses or backend
+            // Use local responses if current level is before the chat demo level,
+            // otherwise use the backend.
+            const chatDemoLevelIndex = levels.findIndex(level => level.chatDemo);
+            const useLocalResponses = currentLevel < chatDemoLevelIndex;
+
+            if (useLocalResponses) {
+                // Hardcoded responses for levels before the chat demo
+                const lowerCaseMessage = input.toLowerCase();
+                if (lowerCaseMessage.includes('hello') || lowerCaseMessage.includes('hi')) {
+                    monikatResponse = "Hello there, Cloud Adventurer! How can I assist you on your quest?";
+                } else if (lowerCaseMessage.includes('oracle cloud') || lowerCaseMessage.includes('oci')) {
+                    monikatResponse = "Oracle Cloud Infrastructure (OCI) is a suite of cloud computing services that runs on the Oracle Cloud Infrastructure platform. It offers a variety of services, including computing, storage, networking, and databases.";
+                } else if (lowerCaseMessage.includes('java')) {
+                    monikatResponse = "Java is a popular, high-level, object-oriented programming language. It's known for its 'write once, run anywhere' capability. Many enterprise applications and Android apps are built with Java.";
+                } else if (lowerCaseMessage.includes('game')) {
+                    monikatResponse = "This is Monica's Cloud Quest! A fun little quiz to test your knowledge about Oracle Cloud and Java, inspired by Monica's learning journey. Get answers right to keep the sun out!";
+                } else if (lowerCaseMessage.includes('putty')) {
+                    monikatResponse = "PuTTY is a free and open-source terminal emulator, serial console and network file transfer application. It supports several network protocols, including SCP, SSH, Telnet, rlogin, and raw socket connection. It's often used to connect to remote servers.";
+                    // showPuttyBubble(); // If showPuttyBubble exists and is relevant here
+                } else if (lowerCaseMessage.includes('hint') || lowerCaseMessage.includes('clue')) {
+                    const currentLevelDataForHint = levels[currentLevel];
+                    if (currentLevelDataForHint && currentLevelDataForHint.hint) {
+                        monikatResponse = `For the current question, here's a hint: "${currentLevelDataForHint.hint}"`;
+                    } else {
+                        monikatResponse = "I don't have a specific hint for this question right now, but keep thinking!";
+                    }
+                } else if (lowerCaseMessage.includes('creator') || lowerCaseMessage.includes('monica')) {
+                    monikatResponse = "The quest was created by Monica, based on her experiences learning about Oracle Cloud and Java!";
+                } else if (lowerCaseMessage.includes('what is the answer') || lowerCaseMessage.includes('tell me the answer')) {
+                    monikatResponse = "I can't just give you the answer! That would spoil the fun of the quest! You can do it!";
+                }
+                // Add more local responses if desired.
+                addChatbotMessage('Monikat', monikatResponse);
+                return; // Exit after local response
+            }
+
+            // If we reach here, it means useLocalResponses is false, so call the backend
+            const payload = {
+                message: input
+            };
+
+            try {
+                // IMPORTANT: This URL is for your LOCAL Tomcat instance.
+                // It should be "http://localhost:8080/MonicatChat/monikat-chat"
+                // if your WAR is named MonicatChat.war and deployed locally.
+                const backendUrl = "http://localhost:8080/MonicatChat/monikat-chat"; 
+
+                const response = await fetch(backendUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP error! Status: ${response.status}, Message: ${errorText}`);
+                }
+
+                const result = await response.json();
+                if (result && result.response) { 
+                    monikatResponse = result.response;
+                } else {
+                    console.error("Unexpected backend response structure:", result);
+                    monikatResponse = "My backend had trouble understanding that. Could you rephrase?";
+                }
+
+            } catch (error) {
+                console.error("Error calling Java backend:", error);
+                monikatResponse = "I couldn't reach my backend server. Please check your local Tomcat server is running and the MonicatChat.war is deployed correctly.";
+            }
+            addChatbotMessage('Monikat', monikatResponse);
+        }
+
+
+        function triggerConfetti() {
+            // Confetti effect
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+        }
+
+        let rainInterval;
+        function createRaindrop() {
+            const raindrop = document.createElement('div');
+            raindrop.classList.add('raindrop');
+            raindrop.style.left = Math.random() * 100 + 'vw';
+            raindrop.style.animationDuration = (Math.random() * 1 + 0.5) + 's'; // Random duration for varied fall speeds
+            raindrop.style.animationDelay = (Math.random() * 2) + 's'; // Random delay for staggered drops
+            rainContainer.appendChild(raindrop);
+
+            // Remove raindrop after animation to prevent DOM clutter
+            raindrop.addEventListener('animationend', () => {
+                raindrop.remove();
+            });
+        }
+
+        function startRain() {
+            if (isRaining) return; // Prevent multiple intervals
+            isRaining = true;
+            document.body.classList.add('rainy');
+            document.body.classList.remove('sunny');
+            rainSound.play();
+            // Clear existing raindrops before starting new ones
+            rainContainer.innerHTML = '';
+            rainInterval = setInterval(createRaindrop, 50); // Create a new raindrop every 50ms
+        }
+
+        function stopRain() {
+            if (!isRaining) return;
+            isRaining = false;
+            document.body.classList.remove('rainy');
+            clearInterval(rainInterval);
+            rainContainer.innerHTML = ''; // Clear all raindrops
+            rainSound.pause();
+            rainSound.currentTime = 0;
+        }
+
+        function toggleRainEffect() {
+            if (!isRaining) {
+                startRain();
+                thunderSound.play();
+                // Make sun fall down
+                sun.classList.remove('sun-return'); // Ensure no return animation interferes
+                sun.classList.add('sun-fall');
+            } else {
+                // This branch should ideally not be hit on a wrong answer,
+                // but if it were, it would stop rain.
+                // For a wrong answer, we only want to start rain and make sun fall.
+                // The sun returns on a *correct* answer.
+            }
+        }
+
+        let butterfliesInterval;
+        function createButterfly() {
+            const butterfly = document.createElement('div');
+            butterfly.classList.add('butterfly');
+            butterfly.style.left = Math.random() * 100 + 'vw';
+            butterfly.style.top = Math.random() * 80 + 'vh';
+            butterfly.style.animationDuration = (Math.random() * 8 + 8) + 's'; // 8-16s
+            butterfly.style.animationDelay = (Math.random() * 5) + 's'; // 0-5s
+            butterfliesContainer.appendChild(butterfly);
+
+            butterfly.addEventListener('animationend', () => {
+                butterfly.remove();
+            });
+        }
+
+        function startButterflies() {
+            // Clear existing butterflies
+            butterfliesContainer.innerHTML = '';
+            for (let i = 0; i < 5; i++) { // Generate a few butterflies initially
+                createButterfly();
+            }
+            butterfliesInterval = setInterval(createButterfly, 3000); // Add new butterflies periodically
+        }
+
+        function stopButterflies() {
+            clearInterval(butterfliesInterval);
+            butterfliesContainer.innerHTML = ''; // Clear all butterflies
+        }
+
+        function playSunny() {
+            stopRain(); // Stop rain effects
+            thunderSound.pause(); // Ensure thunder is stopped
+            thunderSound.currentTime = 0;
+
+            document.body.classList.remove('rainy');
+            document.body.classList.add('sunny');
+
+            sunnySound.play(); // Play sunny music
+
+            // Make sun return to its position
+            sun.classList.remove('sun-fall'); // Remove fall animation if present
+            sun.classList.add('sun-return'); // Add return animation
+            sun.style.top = '70px'; // Ensure it snaps to the top before animation
+            sun.style.opacity = '1'; // Ensure it's visible
+
+            // Remove the sun-return class after the animation completes
+            sun.addEventListener('animationend', function handler() {
+                sun.classList.remove('sun-return');
+                sun.removeEventListener('animationend', handler);
+            });
+
+            startButterflies(); // Start butterflies
+        }
+
+        function showCertificate() {
+            finalScoreSpan.textContent = score;
+            totalQuestionsSpan.textContent = levels.length;
+            certificateDiv.classList.remove('hidden');
+
+            // Optional: Prompt for user's name
+            // let userName = prompt("Enter your name for the certificate:");
+            // if (userName) {
+            //     certificateNameSpan.textContent = userName;
+            // }
+
+            // Ensure Ben's message animation plays
+            const benMessage = document.querySelector('.ben-message');
+            if (benMessage) {
+                benMessage.style.opacity = 0; // Reset opacity for replay
+                benMessage.style.transform = 'translateX(-100%)'; // Reset position for replay
+                setTimeout(() => {
+                    // Apply both animations: slideIn and floatText
+                    benMessage.style.animation = 'slideIn 2s ease-out forwards, floatText 3s ease-in-out infinite alternate';
+                }, 100); // Small delay to ensure reflow
+            }
+        }
+
+        function downloadCertificate() {
+            const certificateElement = document.getElementById('certificate');
+
+            // Add a small delay to ensure Ben's message animation is complete and rendered
+            setTimeout(() => {
+                html2canvas(certificateElement, {
+                    scale: 2, // Increase scale for better quality
+                    useCORS: true // Important for images loaded from other domains
+                }).then(canvas => {
+                    const imgData = canvas.toDataURL('image/png');
+                    const { jsPDF } = window.jspdf;
+                    const pdf = new jsPDF({ // Use jspdf.jsPDF as it's a UMD module
+                        orientation: 'landscape',
+                        unit: 'px',
+                        format: [canvas.width, canvas.height]
+                    });
+
+                    pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+                    pdf.save('Monicas_Cloud_Quest_Certificate.pdf');
+                }).catch(error => {
+                    console.error("Error generating certificate:", error);
+                    alert("Failed to generate certificate. Please try again."); // Using alert as a fallback, consider custom modal
+                });
+            }, 2100); // Wait for slideIn animation (2s) + a little buffer
+        }
+
+
+        // --- Event Listeners ---
+        startBtn.onclick = startGame;
+        backBtn.onclick = () => {
+            if (currentLevel > 0) {
+                currentLevel--;
+                updateGameDisplay();
+                playSunny(); // Ensure sun returns if user goes back
+            }
+        };
+        refreshBtn.onclick = startGame;
+
+        sendButton.onclick = () => {
+            if (chatInput.value.trim() !== '') {
+                processChatInput(chatInput.value.trim());
+            }
+        };
+
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && chatInput.value.trim() !== '') {
+                processChatInput(chatInput.value.trim());
+            }
+        });
+
+        downloadCertificateBtn.onclick = downloadCertificate;
+
+        // Initial setup
+        window.onload = () => {
+            // Play background music on user interaction (modern browsers require this)
+            // A common pattern is to play it after the first click on the page.
+            document.body.addEventListener('click', () => {
+                if (bgMusic.paused) {
+                    bgMusic.play().catch(e => console.log("Background music play failed:", e));
+                }
+                if (sunnySound.paused && document.body.classList.contains('sunny')) {
+                    sunnySound.play().catch(e => console.log("Sunny sound play failed:", e));
+                }
+            }, { once: true }); // Only listen for the first click
+
+            // Start butterflies initially if the page loads sunny
+            if (document.body.classList.contains('sunny')) {
+                startButterflies();
+            }
+        };
+
+    </script>
+</body>
+</html>
